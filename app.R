@@ -1065,12 +1065,18 @@ server <- function(input, output, clientData, session) {
     print(input$samples_ma)
     print(input$samples_const_ma)
     if ((input$const_ma=="Current project") & (!(identical(input$samples_ma,input$samples_const_ma)))){
-      shinyCatch(warning("Samples in analysed data and constrained variables are not the same"),
-                 blocking_level = "warning")
+      tryCatch({warning()},
+               error = function(warn){
+                 showModal(modalDialog("Samples in analysed data and constrained variables are not the same",
+                                       "This will generate errors ahead"))
+               })
     }
     if ((input$const_ma!="Current project") & (!(identical(input$samples_ma,input$rows_const_ma)))){
-      shinyCatch(warning("Samples in analysed data and constrained variables are not the same"),
-                 blocking_level = "warning")
+      tryCatch({warning()},
+               error = function(warn){
+                 showModal(modalDialog("Samples in analysed data and constrained variables are not the same",
+                                       "This will generate errors ahead"))
+               })
     }
     ma_const_data
   })
