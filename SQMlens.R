@@ -10,6 +10,6 @@ library(compositions)
 
 # Create Shiny app
 SQMlens <- function(){
-    source("lone_app.R")
+    source("app.R")
     shinyApp(ui = ui, server = server)
 }
