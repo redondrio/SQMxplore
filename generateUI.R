@@ -1,5 +1,3 @@
-library(shiny)
-
 generateUI <- function(){
     ui <- navbarPage("Shiny SQM",
                # Page Input ----

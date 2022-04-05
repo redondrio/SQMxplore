@@ -1,17 +1,5 @@
-# Shiny.app
-# Libraries ----
-library(shiny)
-library(spsComps)
-library(SQMtools)
-library(ggplot2)
-library(DT)
-library(data.table)
-library(vegan)
-library(caret)
-library(compositions)
-library(RANN)
-
-# Sourced code
+# Shiny app
+# Sourced code ----
 source("generateUI.R")
 # Global variables ----
 SQM <<- NULL
@@ -779,6 +767,3 @@ server <- function(input, output, clientData, session) {
     }
   )
 } # Close server
-
-# Create Shiny app
-shinyApp(ui = ui, server = server)
