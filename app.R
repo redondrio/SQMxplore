@@ -450,10 +450,8 @@ server <- function(input, output, clientData, session) {
   }
   
   rda_ord <- function(data_in,const_var){
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print(class(const_var))
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    rda_res = rda(data_in~const_var)
+    v_ <- as.matrix(const_var)
+    rda_res = rda(data_in~v_)
     return(rda_res)
   }
   
@@ -468,12 +466,13 @@ server <- function(input, output, clientData, session) {
   }
   
   ca_ord <- function(data_in){
-    ca_res = ca(data_in)
+    ca_res = cca(data_in)
     return(ca_res)
   }
   
   cca_ord <- function(data_in,const_var){
-    cca_res = cca(data_in~const_var)
+    v_ <- as.matrix(const_var)
+    cca_res = cca(data_in~v_)
     return(cca_res)
   }
   
@@ -546,7 +545,7 @@ server <- function(input, output, clientData, session) {
     } else {
       ma_data <- reactiveData$temp_ma_data
       ma_data[is.na(ma_data)] <- 0
-      ma_data <- t(ma_data[input$rows_ma,input$cols_ma])
+      ma_data <- ma_data[input$rows_ma,input$cols_ma]
     }
     ma_data
   })
@@ -559,16 +558,12 @@ server <- function(input, output, clientData, session) {
   # Generates the table with imputed values
   reactMaData_impute <- eventReactive(input$imp_ma,{
     ma_data <- isolate(reactiveData$curr_ma_data)
-    ma_data[ma_data==0] <- NA
-    if (input$method_imp_ma == "None"){
-      next
-    } else {
+    if (input$method_imp_ma != "None"){
+      ma_data[ma_data==0] <- NA
       ma_data <- predict(
         preProcess(ma_data,method=switch(input$method_imp_ma,
                                          "Median"="medianImpute",
-                                         "NZV" = "nzv",
-                                         "KNN" = "knnImpute",
-                                         "medianImpute")),
+                                         "NZV" = "nzv")),
         ma_data)
     }
     ma_data
@@ -582,9 +577,7 @@ server <- function(input, output, clientData, session) {
   # Generates the table with transformed values
   reactMaData_transform <- eventReactive(input$trans_ma,{
     ma_data <- isolate(reactiveData$curr_ma_data)
-    if (input$method_trans_ma == "None"){
-      next
-    } else {
+    if (input$method_trans_ma != "None"){
       ma_data <- switch(input$method_trans_ma,
                         "CLR" = data.frame(clr(ma_data)),
                         "ILR" = data.frame(ilr(ma_data)),
@@ -612,7 +605,7 @@ server <- function(input, output, clientData, session) {
     } else {
       ma_const_data <- reactiveData$temp_ma_const_data
       ma_const_data[is.na(ma_const_data)] <- 0
-      ma_const_data <- t(ma_const_data[input$rows_const_ma,input$cols_const_ma])
+      ma_const_data <- ma_const_data[input$rows_const_ma,input$cols_const_ma]
     }
     print(input$samples_ma)
     print(input$samples_const_ma)
@@ -762,7 +755,45 @@ server <- function(input, output, clientData, session) {
     },
     content = function(file) {
       pdf(file = file)
-      reactMaPlot()
+      if (input$ma_method == "PCA"){
+        pca_result <- pca_ord(reactiveData$curr_ma_data)
+        plot(pca_result,type = "n", 
+             xlab = paste0(
+               "PC1 (",round(summary(pca_result)$cont$importance[2,1],2)*100,"%)"
+             ), ylab = paste0(
+               "PC2 (",round(summary(pca_result)$cont$importance[2,2],2)*100,"%)"
+             )
+        )
+        points(pca_result,display = "species", pch = 21)
+        text(pca_result, display = "sites", cex = 0.8)
+      }
+      if (input$ma_method == "RDA"){
+        rda_result <- rda_ord(reactiveData$curr_ma_data,reactiveData$curr_const_data)
+        #print(isolate(str(reactiveData$curr_const_data)))
+        #print(isolate(str(reactiveData$curr_ma_data)))
+        #print(summary(str(rda_result)))
+        plot(rda_result,type = "t", 
+             xlab = paste0(
+               "RDA1 (",round(summary(rda_result)$cont$importance[2,1],2)*100,"%)"
+             ), ylab = paste0(
+               "RDA2 (",round(summary(rda_result)$cont$importance[2,2],2)*100,"%)"
+             )
+        )
+        #points(rda_result,display = "species", pch = 21)
+        #text(rda_result, display = "sites", cex = 0.8)
+      }
+      if (input$ma_method == "PCoA (MDS)"){
+        ordiplot(pcoa_ord(reactiveData$curr_ma_data), type = 't', display = 'sites')
+      }
+      if (input$ma_method == "NMDS"){
+        ordiplot(nmds_ord(reactiveData$curr_ma_data), type = 't',display = 'sites')
+      }
+      if (input$ma_method == "CA"){
+        plot(ca_ord(reactiveData$curr_ma_data), type = 't')
+      }
+      if (input$ma_method == "CCA"){
+        plot(cca_ord(reactiveData$curr_ma_data,reactiveData$curr_const_data), type = 't')
+      }
       dev.off()
     }
   )

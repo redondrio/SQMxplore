@@ -1,5 +1,5 @@
 generateUI <- function(){
-    ui <- navbarPage("Shiny SQM",
+    ui <- navbarPage("SQMlens",
                # Page Input ----
                tabPanel("Dataset",
                         fluidPage("",
@@ -28,7 +28,7 @@ generateUI <- function(){
                         fluidPage("", h1("Summary page"),
                                   # Display Table Output
                                   conditionalPanel(
-                                      condition = "input.load_type=='Load SQMlite from minimum tables'",
+                                      condition = "input.type_load=='Load SQMlite from minimum tables'",
                                       h3("Reads summary"),
                                       DT::dataTableOutput("reads_sum"),
                                       fluidRow(
@@ -197,7 +197,11 @@ generateUI <- function(){
                                 # Input Panel About ----
                                 conditionalPanel(
                                     condition = "input.sel_tab_ma==1",
-                                    "Insert text here"
+                                    p("This is the Multivariate Analysis tab."),
+                                    p("Here you can explore your data with a set of ordination techniques."),
+                                    p("Please bare in mind that this section was designed only for data exploration purposes,
+                                    and it is not an exhaustive collection of all multivariate analysis methods.
+                                    For this reason, the most appropriate analysis or parameters for your data may not be available.")
                                 ),
                                 
                                 # Input Panel Data Selection ----
