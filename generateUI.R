@@ -323,7 +323,7 @@ generateUI <- function(){
                                     
                                     h2("Transformation"),
                                     selectInput("method_trans_ma", "Choose method of transformation",
-                                                choices = c("None","CLR","ALR", "ILR"),
+                                                choices = c("None","Normalise","CLR","ALR", "ILR"),
                                                 selected = "CLR"),
                                     
                                     actionButton("trans_ma","Transform Data")
@@ -340,7 +340,7 @@ generateUI <- function(){
                                     
                                     h2("Transformation"),
                                     selectInput("method_trans_const_ma", "Choose method of transformation",
-                                                choices = c("None","CLR","ALR", "ILR"),
+                                                choices = c("None","Normalise","CLR","ALR", "ILR"),
                                                 selected = "CLR"),
                                     
                                     actionButton("trans_const_ma","Transform Variables")

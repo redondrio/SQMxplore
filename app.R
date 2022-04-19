@@ -579,6 +579,7 @@ server <- function(input, output, clientData, session) {
     ma_data <- isolate(reactiveData$curr_ma_data)
     if (input$method_trans_ma != "None"){
       ma_data <- switch(input$method_trans_ma,
+                        "Normalise" = data.frame(scale(ma_data)),
                         "CLR" = data.frame(clr(ma_data)),
                         "ILR" = data.frame(ilr(ma_data)),
                         "ALR" = data.frame(alr(ma_data)))
@@ -635,9 +636,7 @@ server <- function(input, output, clientData, session) {
   reactMaConst_impute <- eventReactive(input$imp_const_ma,{
     ma_const_data <- isolate(reactiveData$curr_const_data)
     ma_const_data[ma_const_data==0] <- NA
-    if (input$method_imp_const_ma == "None"){
-      next
-    } else {
+    if (input$method_imp_const_ma != "None"){
       ma_const_data <- predict(
         preProcess(ma_const_data,method=switch(input$method_imp_const_ma,
                                          "Median"="medianImpute",
@@ -657,13 +656,12 @@ server <- function(input, output, clientData, session) {
   # Generates the table with transformed values
   reactMaConst_transform <- eventReactive(input$trans_const_ma,{
     ma_const_data <- isolate(reactiveData$curr_const_data)
-    if (input$method_trans_const_ma == "None"){
-      next
-    } else {
+    if (input$method_trans_const_ma != "None"){
       ma_const_data <- switch(input$method_trans_const_ma,
-                        "CLR" = as.matrix(clr(ma_const_data)),
-                        "ILR" = as.matrix(ilr(ma_const_data)),
-                        "ALR" = as.matrix(alr(ma_const_data)))
+                              "Normalise" = as.matrix(scale(ma_const_data)),
+                              "CLR" = as.matrix(clr(ma_const_data)),
+                              "ILR" = as.matrix(ilr(ma_const_data)),
+                              "ALR" = as.matrix(alr(ma_const_data)))
     }
     ma_const_data
   })
