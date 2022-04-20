@@ -1,5 +1,5 @@
 generateUI <- function(){
-    ui <- navbarPage("SQMlens",
+    ui <- navbarPage("SQMxplore",
                # Page Input ----
                tabPanel("Dataset",
                         fluidPage("",
@@ -12,16 +12,16 @@ generateUI <- function(){
                                       h1(),
                                       selectInput("project","Select project",
                                                   choices=list.files(samples_path)),
-                                      
+
                                       h5("Currently loaded project:"),
                                       verbatimTextOutput("out_project",placeholder=TRUE),
-                                      
+
                                       h1(),
                                       actionButton("proj_load","Load project")
                                   ) # Close panel
                         ) # Close layout
                ), # Close Input page
-               
+
                # Page Summary ----
                tabPanel("Summary",
                         # Sidebar layout with input and output definitions
@@ -35,13 +35,13 @@ generateUI <- function(){
                                           column(6,plotOutput(outputId = "reads_readbar")),
                                           column(6,plotOutput(outputId = "reads_basebar"))
                                       ),
-                                      
+
                                       h3("Contigs summary"),
                                       DT::dataTableOutput("contigs_sum"),
-                                      
+
                                       h3("Taxa summary"),
                                       DT::dataTableOutput("taxa_sum"),
-                                      
+
                                       h3("Orfs summary"),
                                       DT::dataTableOutput("orfs_sum"),
                                       fluidRow(
@@ -54,7 +54,7 @@ generateUI <- function(){
                                           column(6,plotOutput(outputId = "orfs_bar1")),
                                           column(6,plotOutput(outputId = "orfs_bar2"))
                                       ),
-                                      
+
                                       h3("Bins summary"),
                                       DT::dataTableOutput("bins_sum")
                                   ), # Close conditional panel
@@ -70,7 +70,7 @@ generateUI <- function(){
                         fluidPage("DataTable",
                                   # Row panel for inputs
                                   fluidRow(
-                                      # Input: 
+                                      # Input:
                                       column(3,
                                              selectInput("lev1_tab", "Choose a section to display", #updated
                                                          choices = "", selected = ""),
@@ -86,7 +86,7 @@ generateUI <- function(){
                                                             multiple = TRUE)
                                       )
                                   ), # Close row panel
-                                  
+
                                   # Display Table Output
                                   DT::dataTableOutput("table")
                         ) # Close layout
@@ -106,36 +106,36 @@ generateUI <- function(){
                                                choices = NULL,
                                                selecte = NULL,
                                                multiple = TRUE),
-                                
+
                                 h4("Taxa"),
                                 # Input: Slider for the number of taxa
                                 sliderInput("n_tax", "Choose the number of taxa", #updated
                                             min = 0, max = 0, value = 0, step = 1),
                                 # Input: Text input to specify taxa and checkbox to override N
-                                checkboxInput("sel_tax", "Select displayed taxa", 
+                                checkboxInput("sel_tax", "Select displayed taxa",
                                               value = F),
                                 selectizeInput("tax_tax", "Selected taxons", #updated
                                                choices = NULL,
                                                multiple = TRUE),
-                                
+
                                 h4("Options"),
-                                checkboxInput("others_tax", "Show other reads", 
+                                checkboxInput("others_tax", "Show other reads",
                                               value = T),
                                 conditionalPanel(
                                     condition = "!input.sel_tax",
-                                    checkboxInput("unmapped_tax", "Ignore unmapped reads", 
+                                    checkboxInput("unmapped_tax", "Ignore unmapped reads",
                                                   value = F),
-                                    checkboxInput("unclass_tax", "Ignore unclassified reads", 
+                                    checkboxInput("unclass_tax", "Ignore unclassified reads",
                                                   value = F),
-                                    checkboxInput("partial_tax", "Ignore partial classifications", 
+                                    checkboxInput("partial_tax", "Ignore partial classifications",
                                                   value = F),
                                 ),
-                                checkboxInput("rescale_tax", "Rescale to 100%", 
+                                checkboxInput("rescale_tax", "Rescale to 100%",
                                               value = F),
-                                numericInput("base_size_tax", "Change font size", 
+                                numericInput("base_size_tax", "Change font size",
                                              value = 11)
                             ), # Close sidebar panel
-                            
+
                             # Main panel for displaying outputs ----
                             mainPanel(
                                 plotOutput(outputId = "taxPlot"),
@@ -143,7 +143,7 @@ generateUI <- function(){
                             ) # Close main panel
                         ) # Close layout
                ), # Close Taxonomy page
-               
+
                # Page Functions ----
                tabPanel("Plot Functions",
                         sidebarLayout(
@@ -159,28 +159,28 @@ generateUI <- function(){
                                                choices = NULL,
                                                selected = NULL,
                                                multiple = TRUE),
-                                
+
                                 h4("Functions"),
                                 # Input: Slider for the number of taxa
                                 sliderInput("n_fun", "Choose the number of functions",
                                             min = 0, max = 0, value = 0, step = 1), #updated
                                 # Input: Text input to specify taxa and checkbox to override N
-                                checkboxInput("sel_fun", "Select functions", 
+                                checkboxInput("sel_fun", "Select functions",
                                               value = F),
                                 selectizeInput("fun_fun", "Name of the function", #updated
                                                choices = NULL,
                                                selected  = NULL,
                                                multiple = TRUE),
-                                
+
                                 h4("Options"),
-                                checkboxInput("unmapped_fun", "Ignore unmapped reads", 
+                                checkboxInput("unmapped_fun", "Ignore unmapped reads",
                                               value = F),
-                                checkboxInput("unclass_fun", "Ignore unclassified reads", 
+                                checkboxInput("unclass_fun", "Ignore unclassified reads",
                                               value = F),
-                                numericInput("base_size_fun", "Change font size", 
+                                numericInput("base_size_fun", "Change font size",
                                              11)
                             ), # Close sidebar panel
-                            
+
                             # Main panel for displaying outputs ----
                             mainPanel(
                                 # Output: Histogram
@@ -203,7 +203,7 @@ generateUI <- function(){
                                     and it is not an exhaustive collection of all multivariate analysis methods.
                                     For this reason, the most appropriate analysis or parameters for your data may not be available.")
                                 ),
-                                
+
                                 # Input Panel Data Selection ----
                                 conditionalPanel(
                                     condition = "input.sel_tab_ma==2",
@@ -221,7 +221,7 @@ generateUI <- function(){
                                     actionButton("load_ma","Load dataset"),
                                     h5("Current dataset:"),
                                     verbatimTextOutput("out_dataset_ma",placeholder=TRUE),
-                                    
+
                                     h2("Subset input data"),
                                     conditionalPanel(
                                         condition = "input.dataset_ma=='Current project'",
@@ -237,7 +237,7 @@ generateUI <- function(){
                                                        multiple = TRUE),
                                         sliderInput("n_ma", "Choose the number variables (most abundant)", #updated
                                                     min = 2, max = 10, value = 2),
-                                        checkboxInput("sel_var_ma", "Select variables", 
+                                        checkboxInput("sel_var_ma", "Select variables",
                                                       value = F),
                                         selectizeInput("var_ma", "Selected variables", #updated
                                                        choices = NULL,
@@ -271,10 +271,10 @@ generateUI <- function(){
                                                     choices=c(".csv",".tsv"), selected = ".csv")
                                     ),
                                     actionButton("load_const_ma","Load dataset"),
-                                    
+
                                     h5("Current constrained variables from:"),
                                     verbatimTextOutput("out_const_ma",placeholder=TRUE),
-                                    
+
                                     h2("Subset constrained variables"),
                                     conditionalPanel(
                                         condition = "input.const_ma=='Current project'",
@@ -291,7 +291,7 @@ generateUI <- function(){
                                                        multiple = TRUE),
                                         sliderInput("n_const_ma", "Choose the number variables (most abundant)", #updated
                                                     min = 2, max = 10, value = 2),
-                                        checkboxInput("sel_var_const_ma", "Select variables", 
+                                        checkboxInput("sel_var_const_ma", "Select variables",
                                                       value = F),
                                         selectizeInput("var_const_ma", "Selected variables", #updated
                                                        choices = NULL,
@@ -310,7 +310,7 @@ generateUI <- function(){
                                     ),
                                     actionButton("filter_const_ma","Filter constrained variables")
                                 ), # Close conditional panel 3 - Constrained variables
-                                
+
                                 # Input Panel Data Transformations ----
                                 conditionalPanel(
                                     condition = "input.sel_tab_ma==4",
@@ -318,14 +318,14 @@ generateUI <- function(){
                                     selectInput("method_imp_ma", "Choose method of imputation",
                                                 choices = c("None","Median","NZV"),
                                                 selected = "Median"),
-                                    
+
                                     actionButton("imp_ma","Impute Data"),
-                                    
+
                                     h2("Transformation"),
                                     selectInput("method_trans_ma", "Choose method of transformation",
                                                 choices = c("None","Normalise","CLR","ALR", "ILR"),
                                                 selected = "CLR"),
-                                    
+
                                     actionButton("trans_ma","Transform Data")
                                 ),
                                 # Input Panel Constrained Variables Transformations ----
@@ -335,14 +335,14 @@ generateUI <- function(){
                                     selectInput("method_imp_const_ma", "Choose method of imputation",
                                                 choices = c("None","Median","NZV"),
                                                 selected = "Median"),
-                                    
+
                                     actionButton("imp_const_ma","Impute Variables"),
-                                    
+
                                     h2("Transformation"),
                                     selectInput("method_trans_const_ma", "Choose method of transformation",
                                                 choices = c("None","Normalise","CLR","ALR", "ILR"),
                                                 selected = "CLR"),
-                                    
+
                                     actionButton("trans_const_ma","Transform Variables")
                                 ),
                                 # Input Panel Analysis ----
@@ -352,43 +352,43 @@ generateUI <- function(){
                                     selectInput("ma_method", "Choose method of analysis",
                                                 choices = c("PCA","RDA","PCoA (MDS)","NMDS","CA","CCA","DCA","Permanova"),
                                                 selected = "PCA"),
-                                    
+
                                     h2("Parameters"),
                                     conditionalPanel( # PCA parameters
                                         condition = "input.ma_method=='PCA'",
                                         selectInput("test_pca","Test parameter",choices=c(1,2,3),selected=1)
                                     ), # Close conditional panel PCA
-                                    
+
                                     conditionalPanel( # RDA parameters
                                         condition = "input.ma_method=='RDA'",
                                         selectInput("test_rda","Test parameter",choices=c(1,2,3),selected=1)
                                     ), # Close conditional panel RDA
-                                    
+
                                     conditionalPanel( # PCoA parameters
                                         condition = "input.ma_method=='PCoA (MDS)'",
                                         selectInput("dist_pcoa","Distance formula",choices=c(
-                                            "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", 
-                                            "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", 
+                                            "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard",
+                                            "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial",
                                             "chao", "cao", "mahalanobis"),selected="bray")
                                     ), # Close conditional panel RDA
-                                    
+
                                     conditionalPanel( # NMDS parameters
                                         condition = "input.ma_method=='NMDS'",
                                         selectInput("test_nmds","Test parameter",choices=c(1,2,3),selected=1)
                                     ), # Close conditional panel CA
-                                    
+
                                     conditionalPanel( # CA parameters
                                         condition = "input.ma_method=='CA'",
                                         selectInput("test_ca","Test parameter",choices=c(1,2,3),selected=1)
                                     ), # Close conditional panel CA
-                                    
+
                                     conditionalPanel( # CCA parameters
                                         condition = "input.ma_method=='CCA'",
                                         selectInput("test_cca","Test parameter",choices=c(1,2,3),selected=1)
                                     ) # Close conditional panel CCA
                                 ) # Close conditional panel 3 - Analysis
                             ), # Close sidebar panel
-                            
+
                             # Main panel for displaying outputs ----
                             mainPanel(
                                 tabsetPanel(
@@ -416,7 +416,7 @@ generateUI <- function(){
                                     tabPanel("Data transformation",value=4,
                                              h1("Imputed data"),
                                              h5("Data will not be imputed until you press the 'Impute Data' button"),
-                                             DT::dataTableOutput("table_imp_ma"),                                       
+                                             DT::dataTableOutput("table_imp_ma"),
                                              h1("Transformed data"),
                                              h5("Data will not be transformed until you press the 'Transform Data' button"),
                                              DT::dataTableOutput("table_trans_ma")
@@ -426,7 +426,7 @@ generateUI <- function(){
                                     tabPanel("Constrained variable transformation",value=5,
                                              h1("Imputed variables"),
                                              h5("Variables will not be imputed until you press the 'Impute Variables' button"),
-                                             DT::dataTableOutput("table_imp_const_ma"),                                       
+                                             DT::dataTableOutput("table_imp_const_ma"),
                                              h1("Transformed variables"),
                                              h5("Variables will not be transformed until you press the 'Transform Variables' button"),
                                              DT::dataTableOutput("table_trans_const_ma")

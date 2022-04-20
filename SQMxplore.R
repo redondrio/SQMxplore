@@ -9,7 +9,7 @@ library(caret)
 library(compositions)
 
 # Create Shiny app
-SQMlens <- function(){
+SQMxplore <- function(){
     source("app.R")
     shinyApp(ui = ui, server = server)
 }
