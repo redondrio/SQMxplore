@@ -484,55 +484,10 @@ server <- function(input, output, clientData, session) {
     reactiveData$org_ma_data <- reactMaData() # Displayed data
     })
   
-  # Generates the table with imputed values
-  reactMaData_impute <- eventReactive(input$imp_ma,{
-    ma_data <- isolate(reactiveData$curr_ma_data)
-    if (input$method_imp_ma != "None"){
-      ma_data[ma_data==0] <- NA
-      ma_data <- predict(
-        preProcess(ma_data,method=switch(input$method_imp_ma,
-                                         "Median"="medianImpute",
-                                         "NZV" = "nzv")),
-        ma_data)
-    }
-    ma_data
-  })
-  # Store it into a reactive value
-  observeEvent(input$imp_ma,{
-    reactiveData$curr_ma_data <- reactMaData_impute() # Analysed data
-    reactiveData$imp_ma_data <- reactMaData_impute() # Displayed data
-    })
-  
-  # Generates the table with transformed values
-  reactMaData_transform <- eventReactive(input$trans_ma,{
-    ma_data <- isolate(reactiveData$curr_ma_data)
-    if (input$method_trans_ma != "None"){
-      ma_data <- switch(input$method_trans_ma,
-                        "Normalise" = data.frame(scale(ma_data)),
-                        "CLR" = data.frame(clr(ma_data)),
-                        "ILR" = data.frame(ilr(ma_data)),
-                        "ALR" = data.frame(alr(ma_data)))
-    }
-    ma_data
-  })
-  # Store it into a reactive value
-  observeEvent(input$trans_ma,{
-    reactiveData$curr_ma_data <- reactMaData_transform() # Analysed data
-    reactiveData$trans_ma_data <- reactMaData_transform() # Displayed data
-  })
-  
   # Output Multivariate Analysis ----
   # Output tables in Data selection
   output$table_ma <- DT::renderDataTable({
     DT::datatable(reactiveData$org_ma_data)
-  })
-
-  output$table_imp_ma <- DT::renderDataTable({
-    DT::datatable(reactiveData$imp_ma_data)
-  })
-    
-  output$table_trans_ma <- DT::renderDataTable({
-    DT::datatable(reactiveData$trans_ma_data)
   })
   
   # Reactive Plotting Function

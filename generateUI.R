@@ -256,23 +256,6 @@ generateUI <- function(){
                                     ),
                                     actionButton("filter_ma","Filter dataset")
                                 ), # Close conditional panel 2 - Data
-                                # Input Panel Data Transformations ----
-                                conditionalPanel(
-                                    condition = "input.sel_tab_ma==4",
-                                    h2("Imputation"),
-                                    selectInput("method_imp_ma", "Choose method of imputation",
-                                                choices = c("None","Median","NZV"),
-                                                selected = "Median"),
-
-                                    actionButton("imp_ma","Impute Data"),
-
-                                    h2("Transformation"),
-                                    selectInput("method_trans_ma", "Choose method of transformation",
-                                                choices = c("None","Normalise","CLR","ALR", "ILR"),
-                                                selected = "CLR"),
-
-                                    actionButton("trans_ma","Transform Data")
-                                ),
                                 # Input Panel Analysis ----
                                 conditionalPanel(
                                     condition = "input.sel_tab_ma==6",
@@ -307,16 +290,6 @@ generateUI <- function(){
                                              h5("Loaded data will not be updated until you press
                                             the 'Filter dataset' button at the bottom of the page"),
                                              DT::dataTableOutput("table_ma")
-                                    ),
-                                    # Output Panel Data Transformation ----
-                                    tabPanel("Data transformation",value=4,
-                                             h1("Imputed data"),
-                                             h5("Data will not be imputed until you press the 'Impute Data' button"),
-                                             DT::dataTableOutput("table_imp_ma"),
-                                             h1("Transformed data"),
-                                             h5("Data will not be transformed until you press the 'Transform Data' button"),
-                                             DT::dataTableOutput("table_trans_ma")
-                                             # Visualise transformed data
                                     ),
                                     # Output Panel Analysis ----
                                     tabPanel("Plots",value = 6,
