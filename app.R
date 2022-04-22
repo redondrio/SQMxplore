@@ -406,38 +406,6 @@ server <- function(input, output, clientData, session) {
     )
   }) # Close load_ma observer
   
-  observeEvent(input$lev1_const_ma,{
-    updateSelectInput(session,"lev2_const_ma",
-                      choices = names(reactiveData$SQM[[input$lev1_const_ma]]),
-                      selected = ""
-    )
-  }) # Close lev1 observer
-  
-  observeEvent(input$lev2_const_ma,{
-    updateSelectInput(session,"lev3_const_ma",
-                      choices = names(reactiveData$SQM[[input$lev1_const_ma]][[input$lev2_const_ma]]),
-                      selected = ""
-    )
-  }) # Close lev2 observer
-  
-  observeEvent(input$lev3_const_ma,{
-    updateSliderInput(session, 'n_const_ma', value = 2,
-                      max = length(unique(rownames(
-                        reactiveData$SQM[[input$lev1_const_ma]][[input$lev2_const_ma]][[input$lev3_const_ma]]))) -1
-                      # -1 because Unclassified will be removed
-    )
-    updateSelectizeInput(session, "var_const_ma",
-                         choices = rownames(
-                           reactiveData$SQM[[input$lev1_const_ma]][[input$lev2_const_ma]][[input$lev3_const_ma]]))
-  }) # Close lev3 observer
-  
-  observeEvent(input$load_const_ma,{
-    updateSelectizeInput(session,"samples_const_ma", 
-                         choices = reactiveData$SQM$misc$samples,
-                         selected = reactiveData$SQM$misc$samples
-    )
-  }) # Close load_const_ma observer
-  
   # Auxiliary Multivariate Analysis ----
   # To add a new analysis, these are the steps:
   #     1. Add the analysis method as a ma_method choice
@@ -489,30 +457,6 @@ server <- function(input, output, clientData, session) {
       output$out_dataset_ma <- renderText(isolate(input$dataset_ma))
     }
   }) # Close load_ma observer
-  
-  # Select and load constrained variables
-  # Update filters
-  observeEvent(input$load_const_ma,{
-    if (input$const_ma == "Current project"){
-      output$out_const_ma <- renderText(isolate(input$project))
-    } else {
-      tryCatch({
-        output$out_const_ma <- renderText(isolate(input$const_ma))
-        reactiveData$temp_ma_const_data <- read.csv(file = paste0(data_path,input$const_ma),
-                                       header = input$head_const_ma,
-                                       row.names = switch(input$rown_const_ma, "TRUE" = 1, "FALSE" = NULL),
-                                       sep = switch(input$sep_const_ma, ".csv" = ",", ".tsv" = "\t"))
-      }, warning = function(warn) {
-        showModal(modalDialog(title = "Loading error", "Please check table format", easyclose = TRUE))
-      }) # Close tryCatch
-      updateSelectizeInput(session, "rows_const_ma",
-                           choices = rownames(reactiveData$temp_ma_const_data),
-                           selected = "")
-      updateSelectizeInput(session, "cols_const_ma",
-                           choices = colnames(reactiveData$temp_ma_const_data),
-                           selected = colnames(reactiveData$temp_ma_const_data))
-    }
-  }) # Close load_const_ma observer
   
   # Filter and Generate Tables for Multivariate Analysis ----
   # Reactive functions to generate the data when action buttons are hit
@@ -577,87 +521,8 @@ server <- function(input, output, clientData, session) {
     reactiveData$trans_ma_data <- reactMaData_transform() # Displayed data
   })
   
-  # Generates the table with the selected constrained variables
-  reactMaConst <- eventReactive(input$filter_const_ma,{
-    if (input$const_ma == "Current project"){
-      ma_const_data <- reactiveData$SQM[[input$lev1_const_ma]][[input$lev2_const_ma]][[input$lev3_const_ma]]
-      if (input$sel_var_const_ma){
-        ma_const_data <- t(ma_const_data[input$var_const_ma,input$samples_const_ma])
-      } else {
-        ma_const_abun <- rownames(mostAbundant(ma_const_data, input$n_const_ma+1)) # +1 because Unclassified will be removed
-        ma_const_abun <- ma_const_abun[ma_const_abun!='Unclassified']
-        ma_const_data <- t(ma_const_data[ma_const_abun,input$samples_const_ma])
-      } 
-    } else {
-      ma_const_data <- reactiveData$temp_ma_const_data
-      ma_const_data[is.na(ma_const_data)] <- 0
-      ma_const_data <- ma_const_data[input$rows_const_ma,input$cols_const_ma]
-    }
-    print(input$samples_ma)
-    print(input$samples_const_ma)
-    if ((input$const_ma=="Current project") & (!(identical(input$samples_ma,input$samples_const_ma)))){
-      tryCatch({warning()},
-               error = function(warn){
-                 showModal(modalDialog("Samples in analysed data and constrained variables are not the same",
-                                       "This will generate errors ahead"))
-               })
-    }
-    if ((input$const_ma!="Current project") & (!(identical(input$samples_ma,input$rows_const_ma)))){
-      tryCatch({warning()},
-               error = function(warn){
-                 showModal(modalDialog("Samples in analysed data and constrained variables are not the same",
-                                       "This will generate errors ahead"))
-               })
-    }
-    ma_const_data
-  })
-  # Store it into a reactive value
-  observeEvent(input$filter_const_ma,{
-    reactiveData$curr_const_data <- reactMaConst() # Analysed data
-    reactiveData$org_const_data <- reactMaConst() # Displayed data
-  })
-  
-  # Generates the table with imputed contrained variables
-  reactMaConst_impute <- eventReactive(input$imp_const_ma,{
-    ma_const_data <- isolate(reactiveData$curr_const_data)
-    ma_const_data[ma_const_data==0] <- NA
-    if (input$method_imp_const_ma != "None"){
-      ma_const_data <- predict(
-        preProcess(ma_const_data,method=switch(input$method_imp_const_ma,
-                                         "Median"="medianImpute",
-                                         "NZV" = "nzv",
-                                         "KNN" = "knnImpute",
-                                         "medianImpute")),
-        ma_const_data)
-    }
-    ma_const_data
-  })
-  # Store it into a reactive value
-  observeEvent(input$imp_const_ma,{
-    reactiveData$curr_const_data <- reactMaConst_impute() # Analysed data
-    reactiveData$imp_const_data <- reactMaConst_impute() # Displayed data
-  })
-  
-  # Generates the table with transformed values
-  reactMaConst_transform <- eventReactive(input$trans_const_ma,{
-    ma_const_data <- isolate(reactiveData$curr_const_data)
-    if (input$method_trans_const_ma != "None"){
-      ma_const_data <- switch(input$method_trans_const_ma,
-                              "Normalise" = as.matrix(scale(ma_const_data)),
-                              "CLR" = as.matrix(clr(ma_const_data)),
-                              "ILR" = as.matrix(ilr(ma_const_data)),
-                              "ALR" = as.matrix(alr(ma_const_data)))
-    }
-    ma_const_data
-  })
-  # Store it into a reactive value
-  observeEvent(input$trans_const_ma,{
-    reactiveData$trans_const_data <- reactMaConst_transform() # Displayed data
-    reactiveData$curr_const_data <- reactMaConst_transform() # Analysed data
-
-      })
   # Output Multivariate Analysis ----
-  # Output tables in Data selection and Constrained variable selection
+  # Output tables in Data selection
   output$table_ma <- DT::renderDataTable({
     DT::datatable(reactiveData$org_ma_data)
   })
@@ -668,18 +533,6 @@ server <- function(input, output, clientData, session) {
     
   output$table_trans_ma <- DT::renderDataTable({
     DT::datatable(reactiveData$trans_ma_data)
-  })
-  
-  output$table_const <- DT::renderDataTable({
-    DT::datatable(reactiveData$org_const_data)
-  })
-  
-  output$table_imp_const_ma <- DT::renderDataTable({
-    DT::datatable(reactiveData$imp_const_data)
-  })
-  
-  output$table_trans_const_ma <- DT::renderDataTable({
-    DT::datatable(reactiveData$trans_const_data)
   })
   
   # Reactive Plotting Function

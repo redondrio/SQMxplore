@@ -256,61 +256,6 @@ generateUI <- function(){
                                     ),
                                     actionButton("filter_ma","Filter dataset")
                                 ), # Close conditional panel 2 - Data
-                                # Input Panel Constrained Variable Selection ----
-                                conditionalPanel(
-                                    condition = "input.sel_tab_ma==3",
-                                    h2("Select variables for constrained analyses"),
-                                    selectInput("const_ma", "Choose a source of constrained variables",
-                                                choices = c("Current project",list.files(data_path)),
-                                                selected = "Current project"),
-                                    conditionalPanel(
-                                        condition = "input.const_ma!='Current project'",
-                                        checkboxInput("head_const_ma", "Input table includes header", value = T),
-                                        checkboxInput("rown_const_ma", "Input table includes rownames", value = T),
-                                        selectInput("sep_const_ma", "Format",
-                                                    choices=c(".csv",".tsv"), selected = ".csv")
-                                    ),
-                                    actionButton("load_const_ma","Load dataset"),
-
-                                    h5("Current constrained variables from:"),
-                                    verbatimTextOutput("out_const_ma",placeholder=TRUE),
-
-                                    h2("Subset constrained variables"),
-                                    conditionalPanel(
-                                        condition = "input.const_ma=='Current project'",
-                                        selectInput("lev1_const_ma", "Choose a set of data to analyse",
-                                                    choices = c("","functions","taxa"),
-                                                    selected = ""),
-                                        selectInput("lev2_const_ma", "Choose a subsection to display", #updated
-                                                    choices = ""),
-                                        selectInput("lev3_const_ma", "Choose a unit to display", #updated
-                                                    choices = ""),
-                                        selectizeInput("samples_const_ma", "Select samples", #updated
-                                                       choices = NULL,
-                                                       selected = NULL,
-                                                       multiple = TRUE),
-                                        sliderInput("n_const_ma", "Choose the number variables (most abundant)", #updated
-                                                    min = 2, max = 10, value = 2),
-                                        checkboxInput("sel_var_const_ma", "Select variables",
-                                                      value = F),
-                                        selectizeInput("var_const_ma", "Selected variables", #updated
-                                                       choices = NULL,
-                                                       multiple = TRUE)
-                                    ),
-                                    conditionalPanel(
-                                        condition = "input.const_ma!='Current project'",
-                                        selectizeInput("rows_const_ma", "Select rows", #updated
-                                                       choices = NULL,
-                                                       selected = NULL,
-                                                       multiple = TRUE),
-                                        selectizeInput("cols_const_ma", "Select columns", #updated
-                                                       choices = NULL,
-                                                       selected = NULL,
-                                                       multiple = TRUE)
-                                    ),
-                                    actionButton("filter_const_ma","Filter constrained variables")
-                                ), # Close conditional panel 3 - Constrained variables
-
                                 # Input Panel Data Transformations ----
                                 conditionalPanel(
                                     condition = "input.sel_tab_ma==4",
@@ -327,23 +272,6 @@ generateUI <- function(){
                                                 selected = "CLR"),
 
                                     actionButton("trans_ma","Transform Data")
-                                ),
-                                # Input Panel Constrained Variables Transformations ----
-                                conditionalPanel(
-                                    condition = "input.sel_tab_ma==5",
-                                    h2("Imputation"),
-                                    selectInput("method_imp_const_ma", "Choose method of imputation",
-                                                choices = c("None","Median","NZV"),
-                                                selected = "Median"),
-
-                                    actionButton("imp_const_ma","Impute Variables"),
-
-                                    h2("Transformation"),
-                                    selectInput("method_trans_const_ma", "Choose method of transformation",
-                                                choices = c("None","Normalise","CLR","ALR", "ILR"),
-                                                selected = "CLR"),
-
-                                    actionButton("trans_const_ma","Transform Variables")
                                 ),
                                 # Input Panel Analysis ----
                                 conditionalPanel(
@@ -380,14 +308,6 @@ generateUI <- function(){
                                             the 'Filter dataset' button at the bottom of the page"),
                                              DT::dataTableOutput("table_ma")
                                     ),
-                                    # Output Panel Constrained Variable Selection ----
-                                    tabPanel("Constrained variable selection",value=3,
-                                             # Display Table Output
-                                             h1("Selected variables"),
-                                             h5("Selected variables will not be updated until you press
-                                            the 'Filter constrained variables' button at the bottom of the page"),
-                                             DT::dataTableOutput("table_const")
-                                    ),
                                     # Output Panel Data Transformation ----
                                     tabPanel("Data transformation",value=4,
                                              h1("Imputed data"),
@@ -396,16 +316,6 @@ generateUI <- function(){
                                              h1("Transformed data"),
                                              h5("Data will not be transformed until you press the 'Transform Data' button"),
                                              DT::dataTableOutput("table_trans_ma")
-                                             # Visualise transformed data
-                                    ),
-                                    # Output Panel Constrained Variable Transformation ----
-                                    tabPanel("Constrained variable transformation",value=5,
-                                             h1("Imputed variables"),
-                                             h5("Variables will not be imputed until you press the 'Impute Variables' button"),
-                                             DT::dataTableOutput("table_imp_const_ma"),
-                                             h1("Transformed variables"),
-                                             h5("Variables will not be transformed until you press the 'Transform Variables' button"),
-                                             DT::dataTableOutput("table_trans_const_ma")
                                              # Visualise transformed data
                                     ),
                                     # Output Panel Analysis ----
