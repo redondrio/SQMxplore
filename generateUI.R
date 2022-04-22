@@ -350,42 +350,18 @@ generateUI <- function(){
                                     condition = "input.sel_tab_ma==6",
                                     h2("Analysis"),
                                     selectInput("ma_method", "Choose method of analysis",
-                                                choices = c("PCA","RDA","PCoA (MDS)","NMDS","CA","CCA","DCA","Permanova"),
+                                                choices = c("PCA","PCoA (MDS)","NMDS"),
                                                 selected = "PCA"),
-
-                                    h2("Parameters"),
-                                    conditionalPanel( # PCA parameters
-                                        condition = "input.ma_method=='PCA'",
-                                        selectInput("test_pca","Test parameter",choices=c(1,2,3),selected=1)
-                                    ), # Close conditional panel PCA
-
-                                    conditionalPanel( # RDA parameters
-                                        condition = "input.ma_method=='RDA'",
-                                        selectInput("test_rda","Test parameter",choices=c(1,2,3),selected=1)
-                                    ), # Close conditional panel RDA
 
                                     conditionalPanel( # PCoA parameters
                                         condition = "input.ma_method=='PCoA (MDS)'",
-                                        selectInput("dist_pcoa","Distance formula",choices=c(
+                                        h2("Parameters"),
+                                        selectInput("dist_pcoa","Distance formula", choices = c(
                                             "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard",
-                                            "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial",
-                                            "chao", "cao", "mahalanobis"),selected="bray")
-                                    ), # Close conditional panel RDA
-
-                                    conditionalPanel( # NMDS parameters
-                                        condition = "input.ma_method=='NMDS'",
-                                        selectInput("test_nmds","Test parameter",choices=c(1,2,3),selected=1)
-                                    ), # Close conditional panel CA
-
-                                    conditionalPanel( # CA parameters
-                                        condition = "input.ma_method=='CA'",
-                                        selectInput("test_ca","Test parameter",choices=c(1,2,3),selected=1)
-                                    ), # Close conditional panel CA
-
-                                    conditionalPanel( # CCA parameters
-                                        condition = "input.ma_method=='CCA'",
-                                        selectInput("test_cca","Test parameter",choices=c(1,2,3),selected=1)
-                                    ) # Close conditional panel CCA
+                                            "gower", "altGower", "morisita", "horn", "raup" , "binomial",
+                                            "chao", "cao", "mahalanobis"), selected = "bray")
+                                    ), # Close conditional panel PCoA (MDS)
+                                    
                                 ) # Close conditional panel 3 - Analysis
                             ), # Close sidebar panel
 
@@ -433,7 +409,7 @@ generateUI <- function(){
                                              # Visualise transformed data
                                     ),
                                     # Output Panel Analysis ----
-                                    tabPanel("Plots",value=6,
+                                    tabPanel("Plots",value = 6,
                                              # Output: MA graph
                                              actionButton("ma_plot","Plot"),
                                              plotOutput(outputId = "maPlot"),

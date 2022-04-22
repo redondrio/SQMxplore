@@ -443,18 +443,12 @@ server <- function(input, output, clientData, session) {
   #     1. Add the analysis method as a ma_method choice
   #     2. Add the associated conditional panel for the parameters
   #     3. Add the auxiliary function to obtain the ordination
-  #     4. Add the plotting function within reactMaPlot
+  #     4. Add the plotting function within reactMaPlot (and plotting function)
   
   # Functions to make the data to plot
   pca_ord <- function(data_in){
     pca_res = rda(data_in)
     return(pca_res)
-  }
-  
-  rda_ord <- function(data_in,const_var){
-    v_ <- as.matrix(const_var)
-    rda_res = rda(data_in~v_)
-    return(rda_res)
   }
   
   pcoa_ord <- function(data_in){
@@ -466,18 +460,7 @@ server <- function(input, output, clientData, session) {
     nmds_res = metaMDS(data_in)
     return(nmds_res)
   }
-  
-  ca_ord <- function(data_in){
-    ca_res = cca(data_in)
-    return(ca_res)
-  }
-  
-  cca_ord <- function(data_in,const_var){
-    v_ <- as.matrix(const_var)
-    cca_res = cca(data_in~v_)
-    return(cca_res)
-  }
-  
+
   # Load Data Multivariate Analysis ----
   
   # Select and load dataset
@@ -714,32 +697,11 @@ server <- function(input, output, clientData, session) {
       points(pca_result,display = "species", pch = 21)
       text(pca_result, display = "sites", cex = 0.8)
     }
-    if (input$ma_method == "RDA"){
-      rda_result <- rda_ord(reactiveData$curr_ma_data,reactiveData$curr_const_data)
-      #print(isolate(str(reactiveData$curr_const_data)))
-      #print(isolate(str(reactiveData$curr_ma_data)))
-      #print(summary(str(rda_result)))
-      plot(rda_result,type = "t", 
-           xlab = paste0(
-             "RDA1 (",round(summary(rda_result)$cont$importance[2,1],2)*100,"%)"
-           ), ylab = paste0(
-             "RDA2 (",round(summary(rda_result)$cont$importance[2,2],2)*100,"%)"
-           )
-      )
-      #points(rda_result,display = "species", pch = 21)
-      #text(rda_result, display = "sites", cex = 0.8)
-    }
     if (input$ma_method == "PCoA (MDS)"){
       ordiplot(pcoa_ord(reactiveData$curr_ma_data), type = 't', display = 'sites')
     }
     if (input$ma_method == "NMDS"){
       ordiplot(nmds_ord(reactiveData$curr_ma_data), type = 't',display = 'sites')
-    }
-    if (input$ma_method == "CA"){
-      plot(ca_ord(reactiveData$curr_ma_data), type = 't')
-    }
-    if (input$ma_method == "CCA"){
-      plot(cca_ord(reactiveData$curr_ma_data,reactiveData$curr_const_data), type = 't')
     }
   })
   
@@ -767,32 +729,11 @@ server <- function(input, output, clientData, session) {
         points(pca_result,display = "species", pch = 21)
         text(pca_result, display = "sites", cex = 0.8)
       }
-      if (input$ma_method == "RDA"){
-        rda_result <- rda_ord(reactiveData$curr_ma_data,reactiveData$curr_const_data)
-        #print(isolate(str(reactiveData$curr_const_data)))
-        #print(isolate(str(reactiveData$curr_ma_data)))
-        #print(summary(str(rda_result)))
-        plot(rda_result,type = "t", 
-             xlab = paste0(
-               "RDA1 (",round(summary(rda_result)$cont$importance[2,1],2)*100,"%)"
-             ), ylab = paste0(
-               "RDA2 (",round(summary(rda_result)$cont$importance[2,2],2)*100,"%)"
-             )
-        )
-        #points(rda_result,display = "species", pch = 21)
-        #text(rda_result, display = "sites", cex = 0.8)
-      }
       if (input$ma_method == "PCoA (MDS)"){
         ordiplot(pcoa_ord(reactiveData$curr_ma_data), type = 't', display = 'sites')
       }
       if (input$ma_method == "NMDS"){
         ordiplot(nmds_ord(reactiveData$curr_ma_data), type = 't',display = 'sites')
-      }
-      if (input$ma_method == "CA"){
-        plot(ca_ord(reactiveData$curr_ma_data), type = 't')
-      }
-      if (input$ma_method == "CCA"){
-        plot(cca_ord(reactiveData$curr_ma_data,reactiveData$curr_const_data), type = 't')
       }
       dev.off()
     }
