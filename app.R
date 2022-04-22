@@ -21,6 +21,7 @@ server <- function(input, output, clientData, session) {
   proj_dir <- reactive(paste0(samples_path,input$project,"/"))
   observeEvent(input$proj_load,{
     tryCatch({
+      showModal(modalDialog(title = "Loading", easyclose = TRUE))
       reactiveData$SQM <- switch(input$type_load,
                                  "Load SQMlite from minimum tables" = {
                                    loadSQMlite(proj_dir())
@@ -47,6 +48,7 @@ server <- function(input, output, clientData, session) {
         reactiveData$bins_st <- matrix()
       }
       output$out_project <- renderText(isolate(input$project))
+      showModal(modalDialog(title = "Loaded", "Your project is ready", easyclose = TRUE))
     }, warning = function(warn) {
       showModal(modalDialog(title = "Loading error", "Please check input type", easyclose = TRUE))
     }) # Close tryCatch
