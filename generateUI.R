@@ -109,8 +109,8 @@ generateUI <- function(){
 
                                 h4("Taxa"),
                                 # Input: Slider for the number of taxa
-                                sliderInput("n_tax", "Choose the number of taxa", #updated
-                                            min = 0, max = 0, value = 0, step = 1),
+                                numericInput("n_tax", "Choose the number of taxa", #updated
+                                            value = 1, min = 0),
                                 # Input: Text input to specify taxa and checkbox to override N
                                 checkboxInput("sel_tax", "Select displayed taxa",
                                               value = F),
@@ -162,8 +162,8 @@ generateUI <- function(){
 
                                 h4("Functions"),
                                 # Input: Slider for the number of taxa
-                                sliderInput("n_fun", "Choose the number of functions",
-                                            min = 0, max = 0, value = 0, step = 1), #updated
+                                numericInput("n_fun", "Choose the number of functions",
+                                            value = 1, min = 0), #updated
                                 # Input: Text input to specify taxa and checkbox to override N
                                 checkboxInput("sel_fun", "Select functions",
                                               value = F),

@@ -65,7 +65,7 @@ server <- function(input, output, clientData, session) {
   }) # Close observer
   
   observe({
-    updateSliderInput(session, "n_tax",
+    updateNumericInput(session, "n_tax",
                       max = length(unique(rownames(
                         reactiveData$SQM[["taxa"]][[input$rank_tax]][[input$count_tax]]))),
                       value = 1
@@ -145,7 +145,7 @@ server <- function(input, output, clientData, session) {
   })
   
   observe({
-    updateSliderInput(session, "n_fun",
+    updateNumericInput(session, "n_fun",
                       max = length(unique(rownames(
                         reactiveData$SQM[["functions"]][[input$fun_level_fun]][[input$count_fun]])))
     )
