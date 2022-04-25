@@ -22,7 +22,6 @@ server <- function(input, output, clientData, session) {
   observeEvent(input$proj_load,{
     tryCatch({
       showModal(modalDialog(title = "Loading", easyclose = TRUE))
-      print("In tryCatch")
       reactiveData$SQM <- switch(input$type_load,
                                  "Load directly from SQM project" = {
                                    loadSQMlite(proj_dir())
@@ -32,7 +31,6 @@ server <- function(input, output, clientData, session) {
                                  })
       # Load the stats file
       # add check.names=FALSE to prevent R from changing column names
-      print("In stats")
       if (input$type_load=="Load directly from SQM project"){
         reactiveData$reads_st <- read.csv(paste0(proj_dir(),paste0("22.reads.tsv")),header=TRUE,sep="\t")
         reactiveData$contigs_st <- read.csv(paste0(proj_dir(),paste0("22.contigs.tsv")),header=TRUE,sep="\t")
@@ -48,7 +46,6 @@ server <- function(input, output, clientData, session) {
       }
       output$out_project <- renderText(isolate(input$project))
       showModal(modalDialog(title = "Loaded", "Your project is ready", easyclose = TRUE))
-      print("Out tryCatch")
     }, warning = function(warn) {
       showModal(modalDialog(title = "Loading error", "Please check input type", easyclose = TRUE))
     }, error = function(error) {
@@ -375,177 +372,4 @@ server <- function(input, output, clientData, session) {
     )
     )
   })
-  # Update Multivariate Analysis Inputs ----
-  observeEvent(input$lev1_ma,{
-    updateSelectInput(session,"lev2_ma",
-                      choices = names(reactiveData$SQM[[input$lev1_ma]]),
-                      selected = ""
-    )
-  }) # Close lev1 observer
-  
-  observeEvent(input$lev2_ma,{
-    updateSelectInput(session,"lev3_ma",
-                      choices = names(reactiveData$SQM[[input$lev1_ma]][[input$lev2_ma]]),
-                      selected = ""
-    )
-  }) # Close lev2 observer
-  
-  observeEvent(input$lev3_ma,{
-    updateSliderInput(session, 'n_ma', value = 2,
-                      max = length(unique(rownames(
-                        reactiveData$SQM[[input$lev1_ma]][[input$lev2_ma]][[input$lev3_ma]]))) -1
-                      # -1 because Unclassified will be removed
-    )
-    updateSelectizeInput(session, "var_ma",
-                         choices = rownames(
-                           reactiveData$SQM[[input$lev1_ma]][[input$lev2_ma]][[input$lev3_ma]]))
-  }) # Close lev3 observer
-  
-  observeEvent(input$load_ma,{
-    updateSelectizeInput(session,"samples_ma", 
-                         choices = reactiveData$SQM$misc$samples,
-                         selected = reactiveData$SQM$misc$samples
-    )
-  }) # Close load_ma observer
-  
-  # Auxiliary Multivariate Analysis ----
-  # To add a new analysis, these are the steps:
-  #     1. Add the analysis method as a ma_method choice
-  #     2. Add the associated conditional panel for the parameters
-  #     3. Add the auxiliary function to obtain the ordination
-  #     4. Add the plotting function within reactMaPlot (and plotting function)
-  
-  # Functions to make the data to plot
-  pca_ord <- function(data_in){
-    pca_res = rda(data_in)
-    return(pca_res)
-  }
-  
-  pcoa_ord <- function(data_in){
-    pcoa_res = wcmdscale(vegdist(data_in, method=input$dist_pcoa))
-    return(pcoa_res)
-  }
-  
-  nmds_ord <- function(data_in){
-    nmds_res = metaMDS(data_in)
-    return(nmds_res)
-  }
-
-  # Load Data Multivariate Analysis ----
-  
-  # Select and load dataset
-  # Update filters
-  observeEvent(input$load_ma,{
-    if (input$dataset_ma == "Current project"){
-      output$out_dataset_ma <- renderText(isolate(input$project))
-      updateSelectizeInput(session, "lev1_ma",
-                           choices = c("","functions","taxa"),
-                           selected = "")
-    } else {
-      tryCatch({
-        reactiveData$temp_ma_data <- read.csv(file = paste0(data_path,input$dataset_ma),
-                                 header = input$head_data_ma,
-                                 row.names = switch(input$rown_data_ma, "TRUE" = 1, "FALSE" = NULL),
-                                 sep = switch(input$sep_data_ma, ".csv" = ",", ".tsv" = "\t"))
-      }, warning = function(warn) {
-        showModal(modalDialog(title = "Loading error", "Please check table format", easyclose = TRUE))
-      }) # Close tryCatch
-      updateSelectizeInput(session, "rows_ma",
-                           choices = rownames(reactiveData$temp_ma_data),
-                           selected = rownames(reactiveData$temp_ma_data))
-      updateSelectizeInput(session, "cols_ma",
-                           choices = colnames(reactiveData$temp_ma_data),
-                           selected = colnames(reactiveData$temp_ma_data))
-      output$out_dataset_ma <- renderText(isolate(input$dataset_ma))
-    }
-  }) # Close load_ma observer
-  
-  # Filter and Generate Tables for Multivariate Analysis ----
-  # Reactive functions to generate the data when action buttons are hit
-  # Generates the table with the raw data
-  reactMaData <- eventReactive(input$filter_ma,{
-    if (input$dataset_ma == "Current project"){
-      ma_data <- reactiveData$SQM[[input$lev1_ma]][[input$lev2_ma]][[input$lev3_ma]]
-      if (input$sel_var_ma){
-        ma_data <- t(ma_data[input$var_ma,input$samples_ma])
-      } else {
-        ma_abun <- rownames(mostAbundant(ma_data, input$n_ma+1)) # +1 because Unclassified will be removed
-        ma_abun <- ma_abun[ma_abun!='Unclassified']
-        ma_data <- t(ma_data[ma_abun,input$samples_ma])
-      }
-    } else {
-      ma_data <- reactiveData$temp_ma_data
-      ma_data[is.na(ma_data)] <- 0
-      ma_data <- ma_data[input$rows_ma,input$cols_ma]
-    }
-    ma_data
-  })
-  # Store it into a reactive value
-  observeEvent(input$filter_ma,{
-    reactiveData$curr_ma_data <- reactMaData() # Analysed data
-    reactiveData$org_ma_data <- reactMaData() # Displayed data
-    })
-  
-  # Output Multivariate Analysis ----
-  # Output tables in Data selection
-  output$table_ma <- DT::renderDataTable({
-    DT::datatable(reactiveData$org_ma_data)
-  })
-  
-  # Reactive Plotting Function
-  # try ggrepel for not overlapping text labels (works with ggplot)
-  reactMaPlot <- eventReactive(input$ma_plot,{
-    if (input$ma_method == "PCA"){
-      pca_result <- pca_ord(reactiveData$curr_ma_data)
-      plot(pca_result,type = "n", 
-           xlab = paste0(
-             "PC1 (",round(summary(pca_result)$cont$importance[2,1],2)*100,"%)"
-           ), ylab = paste0(
-             "PC2 (",round(summary(pca_result)$cont$importance[2,2],2)*100,"%)"
-           )
-      )
-      points(pca_result,display = "species", pch = 21)
-      text(pca_result, display = "sites", cex = 0.8)
-    }
-    if (input$ma_method == "PCoA (MDS)"){
-      ordiplot(pcoa_ord(reactiveData$curr_ma_data), type = 't', display = 'sites')
-    }
-    if (input$ma_method == "NMDS"){
-      ordiplot(nmds_ord(reactiveData$curr_ma_data), type = 't',display = 'sites')
-    }
-  })
-  
-  output$maPlot <- renderPlot({
-    print(reactMaPlot())
-  })
-  
-  output$maPlotDown <- downloadHandler(
-    # Should be able to use the reactive functions 
-    # but this generates nothing
-    filename = function() {
-      paste("Ma_plot_", Sys.time(), '.pdf', sep='') 
-    },
-    content = function(file) {
-      pdf(file = file)
-      if (input$ma_method == "PCA"){
-        pca_result <- pca_ord(reactiveData$curr_ma_data)
-        plot(pca_result,type = "n", 
-             xlab = paste0(
-               "PC1 (",round(summary(pca_result)$cont$importance[2,1],2)*100,"%)"
-             ), ylab = paste0(
-               "PC2 (",round(summary(pca_result)$cont$importance[2,2],2)*100,"%)"
-             )
-        )
-        points(pca_result,display = "species", pch = 21)
-        text(pca_result, display = "sites", cex = 0.8)
-      }
-      if (input$ma_method == "PCoA (MDS)"){
-        ordiplot(pcoa_ord(reactiveData$curr_ma_data), type = 't', display = 'sites')
-      }
-      if (input$ma_method == "NMDS"){
-        ordiplot(nmds_ord(reactiveData$curr_ma_data), type = 't',display = 'sites')
-      }
-      dev.off()
-    }
-  )
 } # Close server
