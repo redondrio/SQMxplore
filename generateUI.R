@@ -6,9 +6,8 @@ generateUI <- function(){
                                   mainPanel(
                                       # If an option is added, include it in the switch at the load section
                                       selectInput("type_load","Select type of input",
-                                                  choices=c("Load SQMlite from minimum tables",
-                                                            "Load longreads project",
-                                                            "Load project from RDS file")),
+                                                  choices=c("Load directly from SQM project",
+                                                            "Load from pre-saved RDS file")),
                                       h1(),
                                       selectInput("project","Select project",
                                                   choices=list.files(samples_path)),
@@ -28,7 +27,7 @@ generateUI <- function(){
                         fluidPage("", h1("Summary page"),
                                   # Display Table Output
                                   conditionalPanel(
-                                      condition = "input.type_load=='Load SQMlite from minimum tables'",
+                                      condition = "input.type_load=='Load directly from SQM project'",
                                       h3("Reads summary"),
                                       DT::dataTableOutput("reads_sum"),
                                       fluidRow(
@@ -59,7 +58,7 @@ generateUI <- function(){
                                       DT::dataTableOutput("bins_sum")
                                   ), # Close conditional panel
                                   conditionalPanel(
-                                      condition = "input.type_load!='Load SQMlite from minimum tables'",
+                                      condition = "input.type_load!='Load directly from SQM project'",
                                       h5("This object does not include summary tables")
                                   )
                         ) # Close layout

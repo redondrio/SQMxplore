@@ -22,19 +22,18 @@ server <- function(input, output, clientData, session) {
   observeEvent(input$proj_load,{
     tryCatch({
       showModal(modalDialog(title = "Loading", easyclose = TRUE))
+      print("In tryCatch")
       reactiveData$SQM <- switch(input$type_load,
-                                 "Load SQMlite from minimum tables" = {
+                                 "Load directly from SQM project" = {
                                    loadSQMlite(proj_dir())
                                  },
-                                 "Load longreads project" = {
-                                   loadSQMlite(proj_dir())
-                                 },
-                                 "Load project from RDS file" = {
+                                 "Load from pre-saved RDS file" = {
                                    readRDS(paste0(samples_path,input$project))
                                  })
       # Load the stats file
       # add check.names=FALSE to prevent R from changing column names
-      if (input$type_load=="Load SQMlite from minimum tables"){
+      print("In stats")
+      if (input$type_load=="Load directly from SQM project"){
         reactiveData$reads_st <- read.csv(paste0(proj_dir(),paste0("22.reads.tsv")),header=TRUE,sep="\t")
         reactiveData$contigs_st <- read.csv(paste0(proj_dir(),paste0("22.contigs.tsv")),header=TRUE,sep="\t")
         reactiveData$taxa_st <- read.csv(paste0(proj_dir(),paste0("22.taxa.tsv")),header=TRUE,sep="\t")
@@ -49,9 +48,12 @@ server <- function(input, output, clientData, session) {
       }
       output$out_project <- renderText(isolate(input$project))
       showModal(modalDialog(title = "Loaded", "Your project is ready", easyclose = TRUE))
+      print("Out tryCatch")
     }, warning = function(warn) {
       showModal(modalDialog(title = "Loading error", "Please check input type", easyclose = TRUE))
-    }) # Close tryCatch
+    }, error = function(error) {
+      showModal(modalDialog(title = "Loading error", "Please check input type", easyclose = TRUE))
+    }  ) # Close tryCatch
   }) # Close proj_load observer
   # Update Taxonomy Inputs ----
   observe({
