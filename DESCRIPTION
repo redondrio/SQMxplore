@@ -1,6 +1,6 @@
 Imports:
-	shiny,
-  SQMtools,
+	shiny (>= 1.7.0),
+  SQMtools (>= 0.7.0),
   ggplot2,
   DT,
   data.table
