@@ -1,0 +1,6 @@
+Imports:
+	shiny,
+  SQMtools,
+  ggplot2,
+  DT,
+  data.table
