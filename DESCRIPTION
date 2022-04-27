@@ -1,7 +1,8 @@
-Package: brocolors
+Package: SQMxplore
 Version: 0.1
-Imports:
-	shiny (>= 1.7.0),
+Import:
+  shiny (>= 1.7.0),
+  shinyFiles,
   SQMtools (>= 0.7.0),
   ggplot2,
   DT,
