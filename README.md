@@ -41,7 +41,7 @@ Plase refer to the [SqueezeMeta documentation](https://github.com/jtamames/Squee
 * **Generate the SQMtools tables**
 
 Plase refer to the [SQMtools documentation](https://github.com/jtamames/SqueezeMeta/wiki/Using-R-to-analyze-your-SQM-results "SQMtools documentation") for this step. These tables are automatically generated when a project is loaded into R with the `loadSQM()` or `loadSQMlite()` functions. For `sqm_reads` and `sqm_longrads` projects, please refer to the use of `sqmreads2tables.py` script.
-jj
+
 Once these tables are generated, SQMxplore will have all needed data to start working.
 
 ## Launching the app

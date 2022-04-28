@@ -17,9 +17,11 @@ server <- function(input, output, clientData, session) {
   roots = c(root=".")
   shinyDirChoose(input, "samples_path", roots = roots, filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw"))
   output$out_samples_path <- renderPrint({parseDirPath(roots, input$samples_path)})
+  tsv_dir <- reactive({
+    paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/results/tables/")
+  })
   proj_dir <- reactive({
     paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/")
-    print(paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/"))
   })
   
   # Load the SQM object and stats files ----
@@ -28,7 +30,7 @@ server <- function(input, output, clientData, session) {
       showModal(modalDialog(title = "Loading", easyclose = TRUE))
       reactiveData$SQM <- switch(input$type_load,
                                  "Load directly from SQM project" = {
-                                   loadSQMlite(proj_dir())
+                                   loadSQMlite(tsv_dir())
                                  },
                                  "Load from pre-saved RDS file" = {
                                    readRDS(paste0(input$samples_path,"/",input$project))
