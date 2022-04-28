@@ -33,7 +33,7 @@ server <- function(input, output, clientData, session) {
                                    loadSQMlite(tsv_dir())
                                  },
                                  "Load from pre-saved RDS file" = {
-                                   readRDS(paste0(input$samples_path,"/",input$project))
+                                   readRDS(paste0(parseDirPath(roots, input$samples_path),"/",input$project))
                                  })
       # Load the stats file
       # add check.names=FALSE to prevent R from changing column names
