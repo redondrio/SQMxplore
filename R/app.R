@@ -13,7 +13,7 @@ server <- function(input, output, clientData, session) {
               choices=(list.files(parseDirPath(roots, input$samples_path))))
   })
   
-  # Load the SQM object and stats files ----
+  # Set the paths ----
   roots = c(root=".")
   shinyDirChoose(input, "samples_path", roots = roots, filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw"))
   output$out_samples_path <- renderPrint({parseDirPath(roots, input$samples_path)})
@@ -239,7 +239,6 @@ server <- function(input, output, clientData, session) {
                                         "contigs" = "This subsection does not have units",
                                         "bins" = "This subsection does not have units",
                                         "")
-                      )
     )
   }) # Close lev1+2 observer
 
