@@ -13,15 +13,18 @@ The SQMxplore package solves this need to create a user-friendly interface to ex
 ## Installation
 
 The easiest way to install SQMxplore from GitHub using `devtools`. First open an R session or Rstudio, and run the following commands:
-`library(devtools)`
-`install_github("redondrio/SQMxplore@tfm")`
+```
+if(!require(devtools)) { install.packages("devtools"); library(devtools) }
+install_github("redondrio/SQMxplore@tfm")
+```
 
 To install SQMxplore without the `devtools` package, download SQMxplore using the "Download ZIP" option at the GitHub repository. Please make sure you select the TFM branch, as it is currently the stable and finished version.
 Then open a terminal window at the directory where the package was downloaded and run the following commands (changing the file names if necessary):
-`unzip SQMxplore-tfm.zip`
-`R CMD build SQMxplore-tfm`
-`R CMD install SQMxplore_0.1.tar.gz`
-
+```
+unzip SQMxplore-tfm.zip
+R CMD build SQMxplore-tfm
+R CMD install SQMxplore_0.1.tar.gz
+```
 If everything runs correctly, the line `* DONE (SQMxplore)` should be printed at the end of installation.
 
 Now the SQMxplore package can be loaded into an R environment using `library(SQMxplore)`.
@@ -33,22 +36,24 @@ To prepare a project that can be loaded into SQMxplore, some previous steps must
 
 * **Generate a project with SqueezeMeta**
 
-Plase refer to the [SqueezeMeta documentation](https://github.com/jtamames/SqueezeMeta "SqueezeMeta documentation") for this step. Any project created with SqueezeMeta can be loaded into SQMxplore.
+Plase refer to the [SqueezeMeta documentation](https://github.com/jtamames/SqueezeMeta "SqueezeMeta documentation") for this step. Any project created with SqueezeMeta can be loaded into SQMxplore, including reads and longreads projects.
 
 * **Generate the SQMtools tables**
 
 Plase refer to the [SQMtools documentation](https://github.com/jtamames/SqueezeMeta/wiki/Using-R-to-analyze-your-SQM-results "SQMtools documentation") for this step. These tables are automatically generated when a project is loaded into R with the `loadSQM()` or `loadSQMlite()` functions. For `sqm_reads` and `sqm_longrads` projects, please refer to the use of `sqmreads2tables.py` script.
-
+jj
 Once these tables are generated, SQMxplore will have all needed data to start working.
 
 ## Launching the app
 
-Once the package is installed and all data is ready, you will just need to run the command SQMxplore() to launch the app from your R or Rstudio console.
+Once the package is installed and loaded (using `library(SQMxplore)`) and all data is ready, you will just need to run the command `SQMxplore()` to launch the app from your R or Rstudio console. Please bare in mind that SQMxplore will take as its working directory the same path as the R session it is launched from.
 
 ## Loading a project
 
-When the app is loaded, the first tab will show you a project selector.
-SQMxplore accepts two types of input. First, an SQM project can be directly loaded as an SQMlite object with the "Load directly from SQM project" option. Second, an .rds file containing an SQM or SQMlite object can be loaded with the "Load from pre-saved RDS file" option.
+When the app is loaded, the first tab will show a directory selector.
+
+SQMxplore accepts two types of input. First, an SQM project can be directly loaded as an SQMlite object with the "Load directly from SQM project" option. In this case, your must choose the parent directory to your project.
+Second, an .rds file containing an SQM or SQMlite object can be loaded with the "Load from pre-saved RDS file" option.
 After selecting the type of input (SQM project or .rds file) and choosing your project name among the list of available projects, you can click on the "Load project" button.
 
 # The app
