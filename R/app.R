@@ -234,7 +234,12 @@ server <- function(input, output, clientData, session) {
                                        "bins" = "This subsection does not have units",
                                        names(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]])
                       ),
-                      selected = ""
+                      selected = switch(input$lev1_tab,
+                                        "orfs" = "This subsection does not have units",
+                                        "contigs" = "This subsection does not have units",
+                                        "bins" = "This subsection does not have units",
+                                        "")
+                      )
     )
   }) # Close lev1+2 observer
 
