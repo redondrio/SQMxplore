@@ -20,8 +20,8 @@ server <- function(input, output, clientData, session) {
   tsv_dir <- reactive({
     paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/results/tables/")
   })
-  proj_dir <- reactive({
-    paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/")
+  res_dir <- reactive({
+    paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/results/")
   })
   
   # Load the SQM object and stats files ----
@@ -38,11 +38,11 @@ server <- function(input, output, clientData, session) {
       # Load the stats file
       # add check.names=FALSE to prevent R from changing column names
       if (input$type_load=="Load directly from SQM project"){
-        reactiveData$reads_st <- read.csv(paste0(proj_dir(),paste0("22.reads.tsv")),header=TRUE,sep="\t")
-        reactiveData$contigs_st <- read.csv(paste0(proj_dir(),paste0("22.contigs.tsv")),header=TRUE,sep="\t")
-        reactiveData$taxa_st <- read.csv(paste0(proj_dir(),paste0("22.taxa.tsv")),header=TRUE,sep="\t")
-        reactiveData$orfs_st <- read.csv(paste0(proj_dir(),paste0("22.orfs.tsv")),header=TRUE,sep="\t")
-        reactiveData$bins_st <- read.csv(paste0(proj_dir(),paste0("22.bins.tsv")),header=TRUE,sep="\t")
+        reactiveData$reads_st <- read.csv(paste0(res_dir(),paste0("22.reads.tsv")),header=TRUE,sep="\t")
+        reactiveData$contigs_st <- read.csv(paste0(res_dir(),paste0("22.contigs.tsv")),header=TRUE,sep="\t")
+        reactiveData$taxa_st <- read.csv(paste0(res_dir(),paste0("22.taxa.tsv")),header=TRUE,sep="\t")
+        reactiveData$orfs_st <- read.csv(paste0(res_dir(),paste0("22.orfs.tsv")),header=TRUE,sep="\t")
+        reactiveData$bins_st <- read.csv(paste0(res_dir(),paste0("22.bins.tsv")),header=TRUE,sep="\t")
       } else { # if loading from an rds, there are no stat files, yet empty objects would raise an error
         reactiveData$reads_st <- matrix()
         reactiveData$contigs_st <- matrix()
