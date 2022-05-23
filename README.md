@@ -46,6 +46,16 @@ Once these tables are generated, SQMxplore will have all needed data to start wo
 
 ## Launching the app
 
+Before the app can be launched, it might be the case that your computer asks you to specify the web browser to use. In that case, you will see the following error when trying to launch the app:
+```
+Error in utils::browseURL(appUrl) :
+'browser' must be a non-empty character string
+```
+
+To solve this, all you need to run is the following command:
+`options(browser="/path/to/browser")`
+where `/path/to/browser` must be the absolute path to your preferred browser executable.
+
 Once the package is installed and loaded (using `library(SQMxplore)`) and all data is ready, you will just need to run the command `SQMxplore()` to launch the app from your R or Rstudio console. Please bare in mind that SQMxplore will take as its working directory the same path as the R session it is launched from.
 
 ## Loading a project
