@@ -1,0 +1,2 @@
+export("SQMxplore")
+import(shiny, shinyFiles, SQMtools, ggplot2, DT, data.table)

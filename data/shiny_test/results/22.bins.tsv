@@ -1,0 +1,13 @@
+#	DASTool
+Number of bins	329
+Complete >= 50%	272
+Complete >= 75%	157
+Complete >= 90%	51
+Contamination < 10%	254
+Contamination >= 50%	7
+Congruent bins	94
+Disparity >0	235
+Disparity >= 0.25	82
+Hi-qual bins (>90% complete,<10% contam)	40
+Good-qual bins (>75% complete,<10% contam)	117
+

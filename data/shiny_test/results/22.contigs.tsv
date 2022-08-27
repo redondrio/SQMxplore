@@ -1,0 +1,18 @@
+#	Assembly
+Number of contigs	8166358
+Total length	5104467821
+Longest contig	725344
+Shortest contig	200
+N50	790
+N90	281
+Contigs at superkingdom (k) rank	6015636 (73.7%), in 4 superkingdoms
+Contigs at phylum (p) rank	5330205 (65.3%), in 187 phyla
+Contigs at class (c) rank	4210815 (51.6%), in 203 classes
+Contigs at order (o) rank	3165768 (38.8%), in 430 orders
+Contigs at family (f) rank	2580979 (31.6%), in 696 families
+Contigs at genus (g) rank	1413733 (17.3%), in 1654 genera
+Contigs at species (s) rank	900102 (11.0%), in 1408 species
+Congruent	8156282 (99.9%)
+Disparity >0	10077 (0.1%)
+Disparity >= 0.25	6099 (0.1%)
+
