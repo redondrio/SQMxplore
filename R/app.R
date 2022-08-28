@@ -2,25 +2,25 @@
 
 # Server ----
 server <- function(input, output, clientData, session) {
-  # Increase maximum upload size
-  options(shiny.maxRequestSize=10*1024^3)
-
-  # Reactive values to store data
+  # Initialise reactive values to store data
   reactiveData <- reactiveValues()
+
+  # Set the paths ----
+  roots = c(root=".")
+  shinyDirChoose(input, "samples_path", roots = roots, filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw"))
 
   # Update loading path ----
   observeEvent(input$samples_path, {
   updateSelectInput(session,"project","Select project",
               choices=(list.files(parseDirPath(roots, input$samples_path))))
   })
-
-  # Set the paths ----
-  roots = c(root=".")
-  shinyDirChoose(input, "samples_path", roots = roots, filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw"))
   output$out_samples_path <- renderPrint({parseDirPath(roots, input$samples_path)})
-  tsv_dir <- reactive({
+
+  # Tables dir to feed to loadSQMlite
+  tab_dir <- reactive({
     paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/results/tables/")
   })
+  # Results dir to load parsed stat files
   res_dir <- reactive({
     paste0(parseDirPath(roots, input$samples_path),"/",input$project,"/results/")
   })
@@ -31,8 +31,7 @@ server <- function(input, output, clientData, session) {
       showModal(modalDialog(title = "Loading", easyclose = TRUE))
       reactiveData$SQM <- switch(input$type_load,
                                  "Load directly from SQM project" = {
-                                   print(tsv_dir())
-                                   loadSQMlite(tsv_dir())
+                                   loadSQMlite(tab_dir())
                                  },
                                  "Load from pre-saved RDS file" = {
                                    readRDS(paste0(parseDirPath(roots, input$samples_path),"/",input$project))
@@ -55,9 +54,9 @@ server <- function(input, output, clientData, session) {
       output$out_project <- renderText(isolate(input$project))
       showModal(modalDialog(title = "Loaded", "Your project is ready", easyclose = TRUE))
     }, warning = function(warn) {
-      showModal(modalDialog(title = "There were warnings during loading", "Please check Rstudio console", easyclose = TRUE))
+      showModal(modalDialog(title = "Stopped", "There were warnings during loading", easyclose = TRUE))
     }, error = function(error) {
-      showModal(modalDialog(title = "Loading error", "Please check input type", easyclose = TRUE))
+      showModal(modalDialog(title = "Loading error", "Please check project and stat files", easyclose = TRUE))
     }  ) # Close tryCatch
   }) # Close proj_load observer
   # Update Taxonomy Inputs ----
@@ -497,7 +496,7 @@ server <- function(input, output, clientData, session) {
                            selected = "")
     } else {
       tryCatch({
-        reactiveData$temp_ma_data <- read.csv(file = paste0(tsv_dir(),input$dataset_ma),
+        reactiveData$temp_ma_data <- read.csv(file = paste0(tab_dir(),input$dataset_ma),
                                  header = input$head_data_ma,
                                  row.names = switch(input$rown_data_ma, "TRUE" = 1, "FALSE" = NULL),
                                  sep = switch(input$sep_data_ma, ".csv" = ",", ".tsv" = "\t"))
