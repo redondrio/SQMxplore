@@ -31,6 +31,7 @@ server <- function(input, output, clientData, session) {
       showModal(modalDialog(title = "Loading", easyclose = TRUE))
       reactiveData$SQM <- switch(input$type_load,
                                  "Load directly from SQM project" = {
+                                   print(tsv_dir())
                                    loadSQMlite(tsv_dir())
                                  },
                                  "Load from pre-saved RDS file" = {
@@ -54,7 +55,7 @@ server <- function(input, output, clientData, session) {
       output$out_project <- renderText(isolate(input$project))
       showModal(modalDialog(title = "Loaded", "Your project is ready", easyclose = TRUE))
     }, warning = function(warn) {
-      showModal(modalDialog(title = "Loading error", "Please check input type", easyclose = TRUE))
+      showModal(modalDialog(title = "There were warnings during loading", "Please check Rstudio console", easyclose = TRUE))
     }, error = function(error) {
       showModal(modalDialog(title = "Loading error", "Please check input type", easyclose = TRUE))
     }  ) # Close tryCatch

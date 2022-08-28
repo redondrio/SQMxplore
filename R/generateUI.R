@@ -14,11 +14,9 @@ generateUI <- function(){
                                       verbatimTextOutput("out_samples_path", placeholder = TRUE),
                                       h1(),
                                       selectInput("project","Select project",
-                                                  choices=c()),
-
+                                                  choices=c()), #updated
                                       h5("Currently loaded project:"),
                                       verbatimTextOutput("out_project",placeholder=TRUE),
-
                                       h1(),
                                       actionButton("proj_load","Load project")
                                   ) # Close panel
