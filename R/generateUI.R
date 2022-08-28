@@ -6,12 +6,15 @@ generateUI <- function(){
                                   mainPanel(
                                       # If an option is added, include it in the switch at the load section
                                       selectInput("type_load","Select type of input",
-                                                  choices=c("Load SQMlite from minimum tables",
-                                                            "Load longreads project",
-                                                            "Load project from RDS file")),
+                                                  choices=c("Load directly from SQM project",
+                                                            "Load from pre-saved RDS file")),
+                                      h4("Select path"),
+                                      shinyDirButton("samples_path", "Input directory", "Select"),
+                                      h5(),
+                                      verbatimTextOutput("out_samples_path", placeholder = TRUE),
                                       h1(),
                                       selectInput("project","Select project",
-                                                  choices=list.files(samples_path)),
+                                                  choices=c()),
 
                                       h5("Currently loaded project:"),
                                       verbatimTextOutput("out_project",placeholder=TRUE),
@@ -209,14 +212,15 @@ generateUI <- function(){
                                     condition = "input.sel_tab_ma==2",
                                     h2("Load input data"),
                                     selectInput("dataset_ma","Select dataset",
-                                                choices=c("Current project",list.files(data_path)),
+                                                choices=c("Current project","Load from file"),
                                                 selected="Current project"),
                                     conditionalPanel(
                                         condition = "input.dataset_ma!='Current project'",
                                         checkboxInput("head_data_ma", "Input table includes header", value = T),
                                         checkboxInput("rown_data_ma", "Input table includes rownames", value = T),
                                         selectInput("sep_data_ma", "Format",
-                                                    choices=c(".csv",".tsv"), selected = ".csv")
+                                                    choices=c(".csv",".tsv"), selected = ".csv"),
+                                        shinyDirButton("ma_data_path", "Input directory", "Select"),
                                     ),
                                     actionButton("load_ma","Load dataset"),
                                     h5("Current dataset:"),
@@ -261,14 +265,15 @@ generateUI <- function(){
                                     condition = "input.sel_tab_ma==3",
                                     h2("Select variables for constrained analyses"),
                                     selectInput("const_ma", "Choose a source of constrained variables",
-                                                choices = c("Current project",list.files(data_path)),
+                                                choices = c("Current project","Load from file"),
                                                 selected = "Current project"),
                                     conditionalPanel(
                                         condition = "input.const_ma!='Current project'",
                                         checkboxInput("head_const_ma", "Input table includes header", value = T),
                                         checkboxInput("rown_const_ma", "Input table includes rownames", value = T),
                                         selectInput("sep_const_ma", "Format",
-                                                    choices=c(".csv",".tsv"), selected = ".csv")
+                                                    choices=c(".csv",".tsv"), selected = ".csv"),
+                                        shinyDirButton("const_data_path", "Input directory", "Select"),
                                     ),
                                     actionButton("load_const_ma","Load dataset"),
 
