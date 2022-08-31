@@ -11,8 +11,8 @@ server <- function(input, output, clientData, session) {
 
   # Update loading path ----
   observeEvent(input$samples_path, {
-  updateSelectInput(session,"project","Select project",
-              choices=(list.files(parseDirPath(roots, input$samples_path))))
+    updateSelectInput(session,"project","Select project",
+      choices=(list.files(parseDirPath(roots, input$samples_path))))
   })
   output$out_samples_path <- renderPrint({parseDirPath(roots, input$samples_path)})
 
@@ -59,6 +59,7 @@ server <- function(input, output, clientData, session) {
       showModal(modalDialog(title = "Loading error", "Please check project and stat files", easyclose = TRUE))
     }  ) # Close tryCatch
   }) # Close proj_load observer
+
   # Update Taxonomy Inputs ----
   observe({
     updateSelectInput(session, "rank_tax",
@@ -73,22 +74,21 @@ server <- function(input, output, clientData, session) {
   }) # Close observer
 
   observe({
-    updateNumericInput(session, "n_tax",
-                      max = length(unique(rownames(
-                        reactiveData$SQM[["taxa"]][[input$rank_tax]][[input$count_tax]]))),
-                      value = 1
-    )
-    updateSelectizeInput(session, "tax_tax",
-                         choices = unique(rownames(
-                           reactiveData$SQM[["taxa"]][[input$rank_tax]][[input$count_tax]]),
-                           multiple = TRUE)
+    updateSelectizeInput(session, "samples_tax",
+                         choices = reactiveData$SQM$misc$samples,
+                         selected = reactiveData$SQM$misc$samples
     )
   }) # Close observer
 
-  observe({updateSelectizeInput(session,"samples_tax",
-                       choices = reactiveData$SQM$misc$samples,
-                       selecte = reactiveData$SQM$misc$samples
-  )})
+  observe({
+    uniques <- unique(rownames(reactiveData$SQM[["taxa"]][[input$rank_tax]][[input$count_tax]]))
+    updateNumericInput(session, "n_tax",
+                       max = length(uniques)
+    )
+    updateSelectizeInput(session, "tax_tax",
+                         choices = uniques
+    )
+  }) # Close observer
 
   # Output Taxonomy ----
   reactTaxPlot <- reactive({
@@ -217,15 +217,19 @@ server <- function(input, output, clientData, session) {
                                               "SQMlite" = c("taxa","functions"),
                                               "Loaded object is not an SQM[lite] object"
                              ),
-                             selected = ""
-  )})
+                             selected = switch(class(reactiveData$SQM),
+                                              "SQM" = "orfs",
+                                              "SQMlite" = "taxa",
+                                              "Loaded object is not an SQM[lite] object"
+                             )
+  )}) # Close observer
 
   observeEvent(input$lev1_tab,{
     updateSelectInput(session,"lev2_tab",
                       choices = names(reactiveData$SQM[[input$lev1_tab]]),
-                      selected = ""
+                      selected = names(reactiveData$SQM[[input$lev1_tab]])[1]
     )
-  }) # Close observer
+  }) # Close lev1 observer
 
   observeEvent(c(input$lev1_tab,input$lev2_tab),{
     updateSelectInput(session,"lev3_tab",
@@ -235,7 +239,12 @@ server <- function(input, output, clientData, session) {
                                        "bins" = "This subsection does not have units",
                                        names(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]])
                       ),
-                      selected = ""
+                      selected = switch(input$lev1_tab,
+                                       "orfs" = "This subsection does not have units",
+                                       "contigs" = "This subsection does not have units",
+                                       "bins" = "This subsection does not have units",
+                                       names(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]][1])
+                      )
     )
   }) # Close lev1+2 observer
 
@@ -286,13 +295,10 @@ server <- function(input, output, clientData, session) {
   })
 
   output$tabDown <- downloadHandler(
-    filename = function() {
-      paste("Table", Sys.time(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write.csv(reactTable(), file, row.names = TRUE)
-    }
+    filename = function() {paste("Table", Sys.time(), ".csv", sep = "")},
+    content = function(file) {write.csv(reactTable(), file, row.names = TRUE)}
   )
+
   # Update Summary Inputs ----
   observe({
     updateSelectInput(session,"orfs_row1",
@@ -301,7 +307,8 @@ server <- function(input, output, clientData, session) {
     updateSelectInput(session,"orfs_row2",
                       choices = reactiveData$orfs_st[,1]
     )
-  })
+  }) # Close observer
+
   # Output Summary ----
   # Reads
   reactReadsSum <- reactive({ #create reactive function

@@ -29,7 +29,7 @@ generateUI <- function(){
                         fluidPage("", h1("Summary page"),
                                   # Display Table Output
                                   conditionalPanel(
-                                      condition = "input.type_load=='Load SQMlite from minimum tables'",
+                                      condition = "input.type_load=='Load directly from SQM project'",
                                       h3("Reads summary"),
                                       DT::dataTableOutput("reads_sum"),
                                       fluidRow(
@@ -105,7 +105,7 @@ generateUI <- function(){
                                             choices = "", selected = ""),
                                 selectizeInput("samples_tax", "Select samples", #updated
                                                choices = NULL,
-                                               selecte = NULL,
+                                               selected = NULL,
                                                multiple = TRUE),
 
                                 h4("Taxa"),
