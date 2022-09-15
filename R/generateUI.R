@@ -90,7 +90,7 @@ generate_ui <- function() {
                     ),
                     column(8,
                         selectizeInput("cols_tab",
-                            "Choose columns to display",
+                            "Choose samples to display",
                             choices = NA, multiple = TRUE) #updated
                     )
                 ), # Close row panel

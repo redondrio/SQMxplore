@@ -232,12 +232,12 @@ server <- function(input, output, clientData, session) {
       choices = switch(class(reactiveData$SQM),
         "SQM"     = c("orfs", "contigs", "bins", "taxa", "functions"),
         "SQMlite" = c("taxa", "functions"),
-        "Loaded object is not an SQM[lite] object"
+        "No project loaded"
       ),
       selected = switch(class(reactiveData$SQM),
         "SQM"     = "orfs",
         "SQMlite" = "taxa",
-        "Loaded object is not an SQM[lite] object"
+        "No project loaded"
       )
     )
   }) # Close observer
@@ -266,24 +266,12 @@ server <- function(input, output, clientData, session) {
     )
   }) # Close lev1+2 observer
 
-  observeEvent(input$lev3_tab, {
+  observeEvent(reactiveData$SQM, {
     updateSelectizeInput(session, "cols_tab",
-      choices = switch(input$lev1_tab,
-        "orfs"      = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]]),
-        "contigs"   = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]]),
-        "bins"      = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]]),
-        "taxa"      = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]][[input$lev3_tab]]),
-        "functions" = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]][[input$lev3_tab]])
-      ),
-      selected = switch(input$lev1_tab,
-        "orfs"      = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]]),
-        "contigs"   = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]]),
-        "bins"      = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]]),
-        "taxa"      = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]][[input$lev3_tab]]),
-        "functions" = colnames(reactiveData$SQM[[input$lev1_tab]][[input$lev2_tab]][[input$lev3_tab]])
-      )
+      choices  = reactiveData$SQM[["misc"]][["samples"]],
+      selected = reactiveData$SQM[["misc"]][["samples"]]
     )
-  }) # Close lev3 observer
+  }) # Close SQM observer
 
   # Output Table ----
   reactTable <- reactive({
