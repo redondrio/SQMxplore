@@ -96,7 +96,13 @@ server <- function(input, output, clientData, session) {
   observe({
     uniques <- unique(rownames(
       reactiveData$SQM[["taxa"]][[input$rank_tax]][[input$count_tax]]))
+    if (length(uniques) > 10){
+      def_n_tax = 10
+    } else {
+      def_n_tax = length(uniques)
+    }
     updateNumericInput(session, "n_tax",
+      value = def_n_tax
       max = length(uniques)
     )
     updateSelectizeInput(session, "tax_tax",
@@ -172,19 +178,23 @@ server <- function(input, output, clientData, session) {
   })
 
   observe({
+    uniques <- unique(rownames(
+      reactiveData$SQM[["functions"]][[input$fun_level_fun]][[input$count_fun]]))
+    if (length(uniques) > 10){
+      def_n_fun = 10
+    } else {
+      def_n_fun = length(uniques)
+    }
     updateNumericInput(session, "n_fun",
-      max = length(unique(rownames(
-        reactiveData$SQM[["functions"]][[input$fun_level_fun]][[input$count_fun]])))
+      value = def_n_fun,
+      max = length(uniques)
     )
-  })
-
-  observe({
     updateSelectizeInput(session, "fun_fun",
       choices = unique(rownames(
         reactiveData$SQM[["functions"]][[input$fun_level_fun]][[input$count_fun]])),
       server = TRUE
     )
-  })
+  }) # Close observer
 
   observeEvent(input$fun_level_fun, {
     updateSelectizeInput(session, "fun_fun",
