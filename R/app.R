@@ -157,7 +157,10 @@ server <- function(input, output, clientData, session) {
 
   observe({
     updateSelectizeInput(session, "count_fun",
-      choices = names(reactiveData$SQM[["functions"]][[input$fun_level_fun]])
+      # Add counts that exist in object and manually add percentage
+      count_exist = names(reactiveData$SQM[["functions"]][[input$fun_level_fun]])
+      count_accepted = c("abund", "percentage", "bases", "tpm", "copy_number")
+      options = c("percentage", intersect(count_exit, count_accepted))
     )
   })
 
