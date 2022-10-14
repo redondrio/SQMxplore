@@ -6,4 +6,5 @@ Imports:
   SQMtools (>= 0.7.0),
   ggplot2,
   DT,
-  data.table
+  data.table,
+  vegan
