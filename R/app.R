@@ -96,13 +96,13 @@ server <- function(input, output, clientData, session) {
   observe({
     uniques <- unique(rownames(
       reactiveData$SQM[["taxa"]][[input$rank_tax]][[input$count_tax]]))
-    if (length(uniques) > 10){
-      def_n_tax = 10
+    if (length(uniques) > 10) {
+      def_n_tax <- 10
     } else {
-      def_n_tax = length(uniques)
+      def_n_tax <- length(uniques)
     }
     updateNumericInput(session, "n_tax",
-      value = def_n_tax
+      value = def_n_tax,
       max = length(uniques)
     )
     updateSelectizeInput(session, "tax_tax",
@@ -161,12 +161,12 @@ server <- function(input, output, clientData, session) {
     )
   })
 
-  observe({
+  observeEvent(input$fun_level_fun, {
+    # Add counts that exist in object and manually add percentage
+    count_exist <- names(reactiveData$SQM[["functions"]][[input$fun_level_fun]])
+    count_accepted <- c("abund", "percent", "bases", "tpm", "copy_number")
     updateSelectizeInput(session, "count_fun",
-      # Add counts that exist in object and manually add percentage
-      count_exist = names(reactiveData$SQM[["functions"]][[input$fun_level_fun]])
-      count_accepted = c("abund", "percentage", "bases", "tpm", "copy_number")
-      options = c("percentage", intersect(count_exit, count_accepted))
+      choices = c("percent", intersect(count_exist, count_accepted))
     )
   })
 
@@ -179,11 +179,11 @@ server <- function(input, output, clientData, session) {
 
   observe({
     uniques <- unique(rownames(
-      reactiveData$SQM[["functions"]][[input$fun_level_fun]][[input$count_fun]]))
+      reactiveData$SQM[["functions"]][[input$fun_level_fun]][["abund"]]))
     if (length(uniques) > 10){
-      def_n_fun = 10
+      def_n_fun <- 10
     } else {
-      def_n_fun = length(uniques)
+      def_n_fun <- length(uniques)
     }
     updateNumericInput(session, "n_fun",
       value = def_n_fun,
@@ -203,6 +203,7 @@ server <- function(input, output, clientData, session) {
       server = TRUE
     )
   }) # Close fun_level_fun observer
+
   # Output Functions ----
   reactFunPlot <- reactive({
     if (input$sel_fun) {
