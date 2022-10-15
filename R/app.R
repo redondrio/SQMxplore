@@ -543,7 +543,7 @@ server <- function(input, output, clientData, session) {
 
   # Load Data Multivariate Analysis ----
 
-  # Set the paths
+  # Set the paths for main data
   shinyDirChoose(input, "ma_data_path", roots = roots,
     filetypes = c("", "txt", "tsv", "csv"))
   # Update loading options
@@ -551,6 +551,8 @@ server <- function(input, output, clientData, session) {
     updateSelectInput(session, "ma_file",
       choices = (list.files(parseDirPath(roots, input$ma_data_path))))
   })
+  output$out_ma_data_path <- renderPrint(
+    {parseDirPath(roots, input$ma_data_path)})
  
   # Select and load dataset
   # Update filters that can only be updated after loading
@@ -563,11 +565,13 @@ server <- function(input, output, clientData, session) {
     } else {
       tryCatch({
         reactiveData$temp_ma_data <- read.csv(
-          file = paste0(tab_dir(), input$ma_file),
+          file = paste0(parseDirPath(roots, input$ma_data_path), "/",
+            input$ma_file),
           header = input$head_file_ma,
           row.names = switch(input$rown_file_ma, "TRUE" = 1, "FALSE" = NULL),
           sep = switch(input$sep_file_ma, ".csv" = ",", ".tsv" = "\t"))
-      }, warning = function(warn) {
+        output$out_ma_data <- renderText(isolate(input$ma_file))
+      }, warning = function(error) {
         showModal(modalDialog(title = "Loading error",
           "Please check table format", easyclose = TRUE))
       }) # Close tryCatch
@@ -577,9 +581,19 @@ server <- function(input, output, clientData, session) {
       updateSelectizeInput(session, "cols_ma",
         choices = colnames(reactiveData$temp_ma_data),
         selected = colnames(reactiveData$temp_ma_data))
-      output$out_ma_data <- renderText(isolate(input$ma_file))
     }
   }) # Close load_ma observer
+
+  # Set the paths for constrained variables
+  shinyDirChoose(input, "const_data_path", roots = roots,
+    filetypes = c("", "types", "tsv", "csv"))
+  # Update loading options
+  observeEvent(input$const_data_path, {
+    updateSelectInput(session, "const_file",
+      choices = (list.files(parseDirPath(roots, input$const_data_path))))
+  })
+  output$const_data_path <- renderPrint(
+    {parseDirPath(roots, input$out_const_data_path)})
 
   # Select and load constrained variables
   # Update filters
@@ -588,13 +602,14 @@ server <- function(input, output, clientData, session) {
       output$out_const_ma <- renderText(isolate(input$project))
     } else {
       tryCatch({
-        output$out_const_ma <- renderText(isolate(input$const_ma))
         reactiveData$temp_ma_const_data <- read.csv(
-          file = paste0(res_dir(), input$const_ma),
+          file = paste0(parseDirPath(roots, input$const_data_path), "/",
+            input$const_file),
           header = input$head_const_ma,
           row.names = switch(input$rown_const_ma, "TRUE" = 1, "FALSE" = NULL),
           sep = switch(input$sep_const_ma, ".csv" = ",", ".tsv" = "\t"))
-      }, warning = function(warn) {
+        output$out_const_ma <- renderText(isolate(input$const_file))
+      }, warning = function(error) {
         showModal(modalDialog(title = "Loading error",
           "Please check table format", easyclose = TRUE))
       }) # Close tryCatch

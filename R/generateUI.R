@@ -293,11 +293,18 @@ generate_ui <- function() {
             condition = "input.sel_tab_ma==3",
             h2("Select variables for constrained analyses"),
             selectInput("const_ma",
-              "Choose a source of constrained variables",
+              "Select the source of constrained variables",
               choices = c("Current project", "Load from file"),
               selected = "Current project"),
             conditionalPanel(
               condition = "input.const_ma!='Current project'",
+              h4("Select path"),
+              shinyDirButton("const_data_path", "Input directory", "Select"),
+              h5(),
+              verbatimTextOutput("out_const_data_path", placeholder = TRUE),
+              h1(),
+              selectInput("const_file", "Select file",
+                choices = c()), #updated
               checkboxInput("head_const_ma",
                 "Input table includes header",
                 value = TRUE),
@@ -309,8 +316,8 @@ generate_ui <- function() {
                 selected = ".csv"),
               shinyDirButton("const_data_path", "Input directory", "Select"),
             ), # Close conditional panel
+            h1(),
             actionButton("load_const_ma", "Load dataset"),
-
             h5("Current constrained variables from:"),
             verbatimTextOutput("out_const_ma", placeholder = TRUE),
 
