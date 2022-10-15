@@ -15,10 +15,10 @@ generate_ui <- function() {
           h1(),
           selectInput("project", "Select project",
           choices = c()), #updated
-          h5("Currently loaded project:"),
-          verbatimTextOutput("out_project", placeholder = TRUE),
           h1(),
-          actionButton("proj_load", "Load project")
+          actionButton("proj_load", "Load project"),
+          h5("Currently loaded project:"),
+          verbatimTextOutput("out_project", placeholder = TRUE)
         ) # Close panel
       ) # Close layout
     ), # Close Input page
@@ -227,57 +227,55 @@ generate_ui <- function() {
           # Input Panel Data Selection ----
           conditionalPanel(
             condition = "input.sel_tab_ma==2",
-            h2("Load input data"),
-            selectInput("dataset_ma", "Select dataset",
+            selectInput("type_load_ma", "Select data source",
               choices = c("Current project", "Load from file"),
               selected = "Current project"),
             conditionalPanel(
-              condition = "input.dataset_ma!='Current project'",
-              checkboxInput("head_data_ma",
-                "Input table includes header", value = TRUE),
-              checkboxInput("rown_data_ma",
-                "Input table includes rownames", value = TRUE),
-              selectInput("sep_data_ma", "Format",
+              condition = "input.type_load_ma!='Current project'",
+              h4("Select path"),
+              shinyDirButton("ma_data_path", "Input directory", "Select"),
+              h5(),
+              verbatimTextOutput("out_ma_data_path", placeholder = TRUE),
+              h1(),
+              selectInput("ma_file", "Select file",
+                choices = c()), #updated 
+              checkboxInput("head_file_ma", "Input table includes header",
+                value = TRUE),
+              checkboxInput("rown_file_ma", "Input table includes rownames",
+                value = TRUE),
+              selectInput("sep_file_ma", "Format",
                 choices = c(".csv", ".tsv"),
                 selected = ".csv"),
-              shinyDirButton("ma_data_path",
-                "Input directory", "Select"),
             ), # Close conditional panel
+            h1(),
             actionButton("load_ma", "Load dataset"),
-            h5("Current dataset:"),
-            verbatimTextOutput("out_dataset_ma",
-              placeholder = TRUE),
+            h5("Currently loaded dataset:"),
+            verbatimTextOutput("out_ma_data", placeholder = TRUE),
 
             h2("Subset input data"),
             conditionalPanel(
-              condition = "input.dataset_ma=='Current project'",
-              selectInput("lev1_ma",
-                "Choose a set of data to analyse",
+              condition = "input.type_load_ma=='Current project'",
+              selectInput("lev1_ma", "Choose a set of data to analyse",
                 choices = ""), #updated
-              selectInput("lev2_ma",
-                "Choose a subsection to display",
+              selectInput("lev2_ma", "Choose a subsection to display",
                 choices = ""), #updated
-              selectInput("lev3_ma",
-                "Choose a unit to display",
+              selectInput("lev3_ma", "Choose a unit to display",
                 choices = ""), #updated
               selectizeInput("samples_ma",
                 "Select samples",
                 choices = NULL,
                 selected = NULL,
                 multiple = TRUE), #updated
-              numericInput("n_ma",
-                "Choose the number variables",
+              numericInput("n_ma", "Choose the number variables",
                 min = 2, max = 10, value = 2), #updated
-              checkboxInput("sel_var_ma",
-                "Select variables",
+              checkboxInput("sel_var_ma", "Select variables",
                 value = FALSE),
-              selectizeInput("var_ma",
-                "Selected variables",
+              selectizeInput("var_ma", "Selected variables",
                 choices = NULL,
                 multiple = TRUE) #updated
             ),
             conditionalPanel(
-              condition = "input.dataset_ma!='Current project'",
+              condition = "input.type_load_ma!='Current project'",
               selectizeInput("rows_ma", "Select rows", #updated
                       choices = NULL,
                       selected = NULL,
@@ -309,8 +307,7 @@ generate_ui <- function() {
               selectInput("sep_const_ma", "Format",
                 choices = c(".csv", ".tsv"),
                 selected = ".csv"),
-              shinyDirButton("const_data_path",
-                "Input directory", "Select"),
+              shinyDirButton("const_data_path", "Input directory", "Select"),
             ), # Close conditional panel
             actionButton("load_const_ma", "Load dataset"),
 
@@ -320,41 +317,32 @@ generate_ui <- function() {
             h2("Subset constrained variables"),
             conditionalPanel(
               condition = "input.const_ma=='Current project'",
-              selectInput("lev1_const_ma",
-                "Choose a set of data to analyse",
+              selectInput("lev1_const_ma", "Choose a set of data to analyse",
                 choices = c("", "functions", "taxa"),
                 selected = ""),
-              selectInput("lev2_const_ma",
-                "Choose a subsection to display",
+              selectInput("lev2_const_ma", "Choose a subsection to display",
                 choices = ""),  #updated
-              selectInput("lev3_const_ma",
-                "Choose a unit to display",
+              selectInput("lev3_const_ma", "Choose a unit to display",
                 choices = ""), #updated
-              selectizeInput("samples_const_ma",
-                "Select samples",
+              selectizeInput("samples_const_ma", "Select samples",
                 choices = NULL,
                 selected = NULL,
                 multiple = TRUE), #updated
-              numericInput("n_const_ma",
-                "Choose the number variables",
+              numericInput("n_const_ma", "Choose the number variables",
                 min = 2, max = 10, value = 2), #updated
-              checkboxInput("sel_var_const_ma",
-                "Select variables",
+              checkboxInput("sel_var_const_ma", "Select variables",
                 value = FALSE), #updated
-              selectizeInput("var_const_ma",
-                "Selected variables",
+              selectizeInput("var_const_ma", "Selected variables",
                 choices = NULL,
                 multiple = TRUE)  #updated
             ), # Close conditional panel
             conditionalPanel(
               condition = "input.const_ma!='Current project'",
-              selectizeInput("rows_const_ma",
-                "Select rows",
+              selectizeInput("rows_const_ma", "Select rows",
                 choices = NULL,
                 selected = NULL,
                 multiple = TRUE), #updated
-              selectizeInput("cols_const_ma",
-                "Select columns",
+              selectizeInput("cols_const_ma", "Select columns",
                 choices = NULL,
                 selected = NULL,
                 multiple = TRUE) #updated

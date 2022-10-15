@@ -10,7 +10,7 @@ server <- function(input, output, clientData, session) {
   shinyDirChoose(input, "samples_path", roots = roots,
     filetypes = c("", "txt", "bigWig", "tsv", "csv", "bw"))
 
-  # Update loading path ----
+  # Update loading options ----
   observeEvent(input$samples_path, {
     updateSelectInput(session, "project", "Select project",
       choices = (list.files(parseDirPath(roots, input$samples_path))))
@@ -536,23 +536,37 @@ server <- function(input, output, clientData, session) {
     return(cca_res)
   }
 
+  # Update loading paths for file inputs ----
+  observeEvent(input$ma_data_path, {
+    updateSelectInput(session, "ma_data_tab")
+  })
+
   # Load Data Multivariate Analysis ----
 
+  # Set the paths
+  shinyDirChoose(input, "ma_data_path", roots = roots,
+    filetypes = c("", "txt", "tsv", "csv"))
+  # Update loading options
+  observeEvent(input$ma_data_path, {
+    updateSelectInput(session, "ma_file",
+      choices = (list.files(parseDirPath(roots, input$ma_data_path))))
+  })
+ 
   # Select and load dataset
   # Update filters that can only be updated after loading
   observeEvent(input$load_ma, {
-    if (input$dataset_ma == "Current project") {
-      output$out_dataset_ma <- renderText(isolate(input$project))
+    if (input$type_load_ma == "Current project") {
+      output$out_ma_data <- renderText(isolate(input$project))
       updateSelectizeInput(session, "lev1_ma",
         choices = c("", "functions", "taxa"),
         selected = "")
     } else {
       tryCatch({
         reactiveData$temp_ma_data <- read.csv(
-          file = paste0(tab_dir(), input$dataset_ma),
-          header = input$head_data_ma,
-          row.names = switch(input$rown_data_ma, "TRUE" = 1, "FALSE" = NULL),
-          sep = switch(input$sep_data_ma, ".csv" = ",", ".tsv" = "\t"))
+          file = paste0(tab_dir(), input$ma_file),
+          header = input$head_file_ma,
+          row.names = switch(input$rown_file_ma, "TRUE" = 1, "FALSE" = NULL),
+          sep = switch(input$sep_file_ma, ".csv" = ",", ".tsv" = "\t"))
       }, warning = function(warn) {
         showModal(modalDialog(title = "Loading error",
           "Please check table format", easyclose = TRUE))
@@ -563,7 +577,7 @@ server <- function(input, output, clientData, session) {
       updateSelectizeInput(session, "cols_ma",
         choices = colnames(reactiveData$temp_ma_data),
         selected = colnames(reactiveData$temp_ma_data))
-      output$out_dataset_ma <- renderText(isolate(input$dataset_ma))
+      output$out_ma_data <- renderText(isolate(input$ma_file))
     }
   }) # Close load_ma observer
 
@@ -597,7 +611,7 @@ server <- function(input, output, clientData, session) {
   # Reactive functions to generate the data when action buttons are hit
   # Generates the table with the raw data
   reactMaData <- eventReactive(input$filter_ma, {
-    if (input$dataset_ma == "Current project") {
+    if (input$type_load_ma == "Current project") {
       ma_data <- reactiveData$SQM[[input$lev1_ma]][[input$lev2_ma]][[input$lev3_ma]]
       if (input$sel_var_ma) {
         ma_data <- t(ma_data[input$var_ma, input$samples_ma])
