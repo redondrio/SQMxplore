@@ -1,5 +1,5 @@
 Package: SQMxplore
-Version: 0.1
+Version: 0.2
 Imports:
   shiny (>= 1.7.0),
   shinyFiles,

@@ -429,6 +429,7 @@ server <- function(input, output, clientData, session) {
     )
     )
   })
+
   # Update Multivariate Analysis Inputs ----
   observeEvent(input$lev1_ma, {
     updateSelectInput(session, "lev2_ma",
@@ -445,7 +446,7 @@ server <- function(input, output, clientData, session) {
   }) # Close lev2 observer
 
   observeEvent(input$lev3_ma, {
-    updateSliderInput(session, "n_ma", value = 2,
+    updateNumericInput(session, "n_ma", value = 2,
       max = length(unique(rownames(
         reactiveData$SQM[[input$lev1_ma]][[input$lev2_ma]][[input$lev3_ma]]))) - 1
       # -1 because Unclassified will be removed
@@ -471,13 +472,14 @@ server <- function(input, output, clientData, session) {
 
   observeEvent(input$lev2_const_ma, {
     updateSelectInput(session, "lev3_const_ma",
-      choices = names(reactiveData$SQM[[input$lev1_const_ma]][[input$lev2_const_ma]]),
+      choices = names(
+        reactiveData$SQM[[input$lev1_const_ma]][[input$lev2_const_ma]]),
       selected = ""
     )
   }) # Close lev2 observer
 
   observeEvent(input$lev3_const_ma, {
-    updateSliderInput(session, "n_const_ma", value = 2,
+    updateNumericInput(session, "n_const_ma", value = 2,
       max = length(unique(rownames(
         reactiveData$SQM[[input$lev1_const_ma]][[input$lev2_const_ma]][[input$lev3_const_ma]]))) - 1
       # -1 because Unclassified will be removed
@@ -537,7 +539,7 @@ server <- function(input, output, clientData, session) {
   # Load Data Multivariate Analysis ----
 
   # Select and load dataset
-  # Update filters
+  # Update filters that can only be updated after loading
   observeEvent(input$load_ma, {
     if (input$dataset_ma == "Current project") {
       output$out_dataset_ma <- renderText(isolate(input$project))
@@ -600,7 +602,8 @@ server <- function(input, output, clientData, session) {
       if (input$sel_var_ma) {
         ma_data <- t(ma_data[input$var_ma, input$samples_ma])
       } else {
-        ma_abun <- rownames(mostAbundant(ma_data, input$n_ma + 1)) # +1 because Unclassified will be removed
+        ma_abun <- rownames(mostAbundant(ma_data, input$n_ma + 1))
+        # +1 because Unclassified will be removed
         ma_abun <- ma_abun[ma_abun != "Unclassified"]
         ma_data <- t(ma_data[ma_abun, input$samples_ma])
       }
@@ -661,7 +664,9 @@ server <- function(input, output, clientData, session) {
       if (input$sel_var_const_ma) {
         ma_const_data <- t(ma_const_data[input$var_const_ma, input$samples_const_ma])
       } else {
-        ma_const_abun <- rownames(mostAbundant(ma_const_data, input$n_const_ma + 1)) # +1 because Unclassified will be removed
+        ma_const_abun <- rownames(
+          mostAbundant(ma_const_data, input$n_const_ma + 1))
+          # +1 because Unclassified will be removed
         ma_const_abun <- ma_const_abun[ma_const_abun != "Unclassified"]
         ma_const_data <- t(ma_const_data[ma_const_abun, input$samples_const_ma])
       }
