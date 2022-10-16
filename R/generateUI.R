@@ -117,15 +117,21 @@ generate_ui <- function() {
             multiple = TRUE), #updated
 
           h4("Taxa"),
-          # Input: Number for the number of taxa
-          numericInput("n_tax", "Choose the number of taxa",
-            value = 1, min = 0), #updated
+          conditionalPanel(
+            condition = "!input.sel_tax",
+            # Input: Number for the number of taxa
+            numericInput("n_tax", "Choose the number of taxa",
+              value = 1, min = 0) #updated
+          ),
+          conditionalPanel(
+            condition = "input.sel_tax",
+            selectizeInput("tax_tax", "Selected taxa",
+              choices = NULL,
+              multiple = TRUE) #updated
+          ),
           # Input: Write taxa names and override N
-          checkboxInput("sel_tax", "Select displayed taxa",
+          checkboxInput("sel_tax", "Manually pick plotted taxa",
             value = FALSE),
-          selectizeInput("tax_tax", "Selected taxons",
-            choices = NULL,
-            multiple = TRUE), #updated
 
           h4("Options"),
           checkboxInput("others_tax", "Show other reads",
@@ -144,8 +150,7 @@ generate_ui <- function() {
           ),
           checkboxInput("rescale_tax", "Rescale to 100%",
                   value = FALSE),
-          numericInput("base_size_tax", "Change font size",
-                  value = 11)
+          numericInput("base_size_tax", "Font size", value = 11)
         ), # Close sidebar panel
 
         # Main panel for displaying outputs ----
@@ -176,24 +181,32 @@ generate_ui <- function() {
             multiple = TRUE), #updated
 
           h4("Functions"),
-          # Input: Number for the number of taxa
-          numericInput("n_fun", "Choose the number of functions",
-            value = 1, min = 0), #updated
-          # Input: Write taxa names and override N
-          checkboxInput("sel_fun", "Select functions",
+          conditionalPanel(
+            condition = "!input.sel_fun",
+            # Input: Number for the number of taxa
+            numericInput("n_fun", "Choose the number of functions",
+              value = 1, min = 0) #updated
+          ),
+          conditionalPanel(
+            condition = "input.sel_fun",
+            selectizeInput("fun_fun", "Selected functions", #updated
+              choices = NULL,
+              selected  = NULL,
+              multiple = TRUE)
+          ),
+          # Input: Write function names and override N
+          checkboxInput("sel_fun", "Manually pick plotted functions",
             value = FALSE),
-          selectizeInput("fun_fun", "Name of the function", #updated
-            choices = NULL,
-            selected  = NULL,
-            multiple = TRUE),
 
           h4("Options"),
-          checkboxInput("unmapped_fun",
-            "Ignore unmapped reads", value = FALSE),
-          checkboxInput("unclass_fun",
-            "Ignore unclassified reads", value = FALSE),
-          numericInput("base_size_fun",
-            "Change font size", 11)
+          conditionalPanel(
+            condition = "!input.sel_fun",
+            checkboxInput("unmapped_fun",
+              "Ignore unmapped reads", value = FALSE),
+            checkboxInput("unclass_fun",
+              "Ignore unclassified reads", value = FALSE)
+          ),
+          numericInput("base_size_fun", "Change Font size", 11)
         ), # Close sidebar panel
 
         # Main panel for displaying outputs ----
