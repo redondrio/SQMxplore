@@ -105,8 +105,12 @@ server <- function(input, output, clientData, session) {
       value = def_n_tax,
       max = length(uniques)
     )
+  }) # Close observer
+
+  observeEvent(c(input$proj_load, input$rank_tax), {
     updateSelectizeInput(session, "tax_tax",
-      choices = uniques
+      choices = unique(rownames(
+        reactiveData$SQM[["taxa"]][[input$rank_tax]][[input$count_tax]]))
     )
   }) # Close observer
 
@@ -180,7 +184,7 @@ server <- function(input, output, clientData, session) {
   observe({
     uniques <- unique(rownames(
       reactiveData$SQM[["functions"]][[input$fun_level_fun]][["abund"]]))
-    if (length(uniques) > 10){
+    if (length(uniques) > 10) {
       def_n_fun <- 10
     } else {
       def_n_fun <- length(uniques)
@@ -189,17 +193,12 @@ server <- function(input, output, clientData, session) {
       value = def_n_fun,
       max = length(uniques)
     )
-    updateSelectizeInput(session, "fun_fun",
-      choices = unique(rownames(
-        reactiveData$SQM[["functions"]][[input$fun_level_fun]][[input$count_fun]])),
-      server = TRUE
-    )
   }) # Close observer
 
-  observeEvent(input$fun_level_fun, {
+  observeEvent(c(input$proj_load, input$fun_level_fun), {
     updateSelectizeInput(session, "fun_fun",
       choices = rownames(
-        reactiveData$SQM[["functions"]][[input$fun_level_fun]][[input$count_fun]]),
+        reactiveData$SQM[["functions"]][[input$fun_level_fun]][["abund"]]),
       server = TRUE
     )
   }) # Close fun_level_fun observer
