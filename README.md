@@ -80,6 +80,10 @@ The selected table can be exported into a .csv file using the "Download table" b
 ## Plot Taxonomy and Plot Functions tabs
 These tabs automatically generate plots with the functions `plotTaxonomy()` and `plotFunctions()` form the SQMtools package.
 All available parameters are available for the user to set. The plots automatically update when any parameter is changed.
+
+<img align="left" src="https://github.com/redondrio/SQMxplore/tree/master/data/.SQMx_tax_tab.png" width="100%">
+<img align="left" src="https://github.com/redondrio/SQMxplore/tree/master/data/.SQMx_tax_fun.png" width="100%">
+
 For any questions on the meaning or the underlying code, please refer to the [SQMtools documentation](https://github.com/jtamames/SqueezeMeta/wiki/Using-R-to-analyze-your-SQM-results "SQMtools documentation")
 The plots can be saved locally into .pdf format using the "Download button" below the plot.
 
