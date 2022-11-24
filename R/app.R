@@ -33,6 +33,7 @@ server <- function(input, output, clientData, session) {
   observeEvent(input$proj_load, {
     tryCatch({
       showModal(modalDialog(title = "Loading", easyclose = TRUE))
+      # Load the SQM object
       reactiveData$SQM <- switch(input$type_load,
         "Load SQM project" = {
           loadSQMlite(tab_dir())
@@ -70,7 +71,10 @@ server <- function(input, output, clientData, session) {
     }, error = function(error) {
       showModal(modalDialog(title = "Loading error",
         "Please check project and stat files", easyclose = TRUE))
-    }) # Close tryCatch
+    # Load the reference identifiers
+    reactiveData$ref_ids <- read_ref(paste0(
+      parseDirPath(roots, input$samples_path), "/id_list.ref"))
+    }) # Close tryCatch)
   }) # Close proj_load observer
 
   # Update Taxonomy Inputs ----

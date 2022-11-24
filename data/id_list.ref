@@ -1,0 +1,9 @@
+!FUNCTIONS
+    DB:KEGG
+        K03701
+        K02014
+        K99999
+    DB:CAZy
+        GT4
+        CE54
+        GH3

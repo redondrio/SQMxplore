@@ -219,7 +219,7 @@ generate_ui <- function() {
     ), # Close Functions page
 
     # Page Multivariate Analysis ----
-    tabPanel("Multivariate Analysis",
+    tabPanel("Multivariate Analysis (beta)",
       sidebarLayout(
         # Sidebar panel for inputs
         sidebarPanel(
@@ -229,12 +229,13 @@ generate_ui <- function() {
             p("This is the Multivariate Analysis tab."),
             p("Here you can explore your data 
             with a set of ordination techniques."),
-            p("Please bare in mind that this section was designed
-            only for data exploration purposes, and it is not an
+            p("Please bare in mind that this section is still 
+            in development, and it is not an
             exhaustive collection of all multivariate analysis 
             methods.
             For this reason, the most appropriate analysis or 
-            parameters for your data may not be available.")
+            parameters for your data may not be available and
+            the results are not guaranteed to be correct.")
           ),
 
           # Input Panel Data Selection ----

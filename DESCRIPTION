@@ -7,4 +7,5 @@ Imports:
   ggplot2,
   DT,
   data.table,
-  vegan
+  vegan,
+  readr
