@@ -63,6 +63,12 @@ server <- function(input, output, clientData, session) {
         reactiveData$bins_st <- matrix()
       }
       output$out_project <- renderText(isolate(input$project))
+      # Load the reference identifiers
+      ref_ids_path <- paste0(
+        parseDirPath(roots, input$samples_path), "/id_list.ref")
+      if (file.exists(ref_ids_path)) {
+        reactiveData$ref_ids <- check_ref(reactiveData$SQM, ref_ids_path)
+      }
       showModal(modalDialog(title = "Loaded",
         "Your project is ready", easyclose = TRUE))
     }, warning = function(warn) {
@@ -71,9 +77,6 @@ server <- function(input, output, clientData, session) {
     }, error = function(error) {
       showModal(modalDialog(title = "Loading error",
         "Please check project and stat files", easyclose = TRUE))
-    # Load the reference identifiers
-    reactiveData$ref_ids <- read_ref(paste0(
-      parseDirPath(roots, input$samples_path), "/id_list.ref"))
     }) # Close tryCatch)
   }) # Close proj_load observer
 
@@ -209,11 +212,22 @@ server <- function(input, output, clientData, session) {
 
   # Output Functions ----
   reactFunPlot <- reactive({
+    print(reactiveData$ref_ids)
+    print(reactiveData$ref_ids[["functions"]][[input$fun_level_fun]])
     if (input$sel_fun) {
       plotFunctions(reactiveData$SQM,
                     fun_level = input$fun_level_fun,
                     count = input$count_fun,
                     fun = input$fun_fun,
+                    samples = input$samples_fun,
+                    ignore_unmapped = input$unmapped_fun,
+                    ignore_unclassified = input$unclass_fun,
+                    base_size = input$base_size_fun)
+    } else if (!is.null(reactiveData$ref_ids)) {
+      plotFunctions(reactiveData$SQM,
+                    fun_level = input$fun_level_fun,
+                    count = input$count_fun,
+                    fun = reactiveData$ref_ids[["functions"]][[input$fun_level_fun]],
                     samples = input$samples_fun,
                     ignore_unmapped = input$unmapped_fun,
                     ignore_unclassified = input$unclass_fun,
