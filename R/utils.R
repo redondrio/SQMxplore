@@ -48,7 +48,6 @@ read_ref <- function(file_path) {
 # they are NA
 
 check_ref <- function(SQM, file_path) {
-    print("in check ref")
     ref_ids <- read_ref(file_path) #read reference identifiers
     check_ids <- list() #initialise checker list
     for (section in names(ref_ids)){

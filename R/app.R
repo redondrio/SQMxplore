@@ -200,20 +200,35 @@ server <- function(input, output, clientData, session) {
       value = def_n_fun,
       max = length(uniques)
     )
-  }) # Close observer
+  }) # Close n_fun update observer
 
-  observeEvent(c(input$proj_load, input$fun_level_fun), {
+  observeEvent(c(input$proj_load, input$fun_level_fun, input$load_fun), {
+    if ((input$sel_fun) & (input$load_fun)) {
+      updateCheckboxInput(session, "sel_fun",
+      value = FALSE)
+    } #if loading references, will deactivate manual selection if already active
     updateSelectizeInput(session, "fun_fun",
       choices = rownames(
         reactiveData$SQM[["functions"]][[input$fun_level_fun]][["abund"]]),
       server = TRUE
     )
-  }) # Close fun_level_fun observer
+  }) # Close fun_fun update observer
+
+  observeEvent(c(input$proj_load, input$fun_level_fun, input$sel_fun), {
+    if ((input$load_fun) & (input$sel_fun)) {
+      updateCheckboxInput(session, "load_fun",
+      value = FALSE)
+    } #if manually selecting, will deactivate references if already active
+    updateSelectizeInput(session, "ref_fun",
+      choices = rownames(
+        reactiveData$SQM[["functions"]][[input$fun_level_fun]][["abund"]]),
+      selected = reactiveData$ref_ids[["functions"]][[input$fun_level_fun]],
+      server = TRUE
+    )
+  }) # Cloase ref_fun update observer
 
   # Output Functions ----
   reactFunPlot <- reactive({
-    print(reactiveData$ref_ids)
-    print(reactiveData$ref_ids[["functions"]][[input$fun_level_fun]])
     if (input$sel_fun) {
       plotFunctions(reactiveData$SQM,
                     fun_level = input$fun_level_fun,
@@ -223,11 +238,11 @@ server <- function(input, output, clientData, session) {
                     ignore_unmapped = input$unmapped_fun,
                     ignore_unclassified = input$unclass_fun,
                     base_size = input$base_size_fun)
-    } else if (!is.null(reactiveData$ref_ids)) {
+    } else if (input$load_fun) {
       plotFunctions(reactiveData$SQM,
                     fun_level = input$fun_level_fun,
                     count = input$count_fun,
-                    fun = reactiveData$ref_ids[["functions"]][[input$fun_level_fun]],
+                    fun = input$ref_fun,
                     samples = input$samples_fun,
                     ignore_unmapped = input$unmapped_fun,
                     ignore_unclassified = input$unclass_fun,
