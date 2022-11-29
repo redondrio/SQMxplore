@@ -268,7 +268,12 @@ server <- function(input, output, clientData, session) {
       paste("Fun_plot_", Sys.time(), ".pdf", sep = "")
     },
     content = function(file) {
-      ggsave(file, reactFunPlot(), device = "pdf")
+      ggsave(file, reactFunPlot(),
+        device = input$dev_funPlot,
+        units = input$unit_funPlot,
+        width = input$width_funPlot,
+        height = input$height_funPlot
+      )
     }
   )
 
