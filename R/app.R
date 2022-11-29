@@ -161,7 +161,12 @@ server <- function(input, output, clientData, session) {
       paste("Tax_plot_", Sys.time(), ".pdf", sep = "")
     },
     content = function(file) {
-      ggsave(file, reactTaxPlot(), device = "pdf")
+      ggsave(file, reactTaxPlot(),
+        device = input$dev_taxPlot,
+        units = input$unit_taxPlot,
+        width = input$width_taxPlot,
+        height = input$height_taxPlot
+      )
     }
   )
 

@@ -156,7 +156,17 @@ generate_ui <- function() {
         # Main panel for displaying outputs ----
         mainPanel(
           plotOutput(outputId = "taxPlot"),
-          downloadButton("taxPlotDown", "Download Plot")
+          downloadButton("taxPlotDown", "Download Plot"),
+          selectizeInput("dev_taxPlot", "Select device",
+            choices = c("pdf", "jpeg", "png"),
+            selected = "pdf"),
+          numericInput("width_taxPlot", "Plot width",
+            value = 20, min = 0),
+          numericInput("height_taxPlot", "Plot height",
+            value = 20, min = 0),
+          selectizeInput("unit_taxPlot", "Units",
+            choices = c("in", "cm", "mm", "px"),
+            selected = "cm")
         ) # Close main panel
       ) # Close layout
     ), # Close Taxonomy page
@@ -230,12 +240,12 @@ generate_ui <- function() {
             choices = c("pdf", "jpeg", "png"),
             selected = "pdf"),
           numericInput("width_funPlot", "Plot width",
-            value = 10, min = 0),
+            value = 20, min = 0),
           numericInput("height_funPlot", "Plot height",
-            value = 10, min = 0),
+            value = 20, min = 0),
           selectizeInput("unit_funPlot", "Units",
             choices = c("in", "cm", "mm", "px"),
-            selected = "px")
+            selected = "cm")
         ) # Close main panel
       ) # Close layout
     ), # Close Functions page
