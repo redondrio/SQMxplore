@@ -46,15 +46,16 @@ server <- function(input, output, clientData, session) {
       # add check.names=FALSE to prevent R from changing column names
       if (input$type_load == "Load SQM project") {
         reactiveData$reads_st <- read.csv(paste0(res_dir(),
-          paste0("22.reads.tsv")), header = TRUE, sep = "\t")
+          paste0("22.reads.tsv")), row.names = 1, header = TRUE, sep = "\t")
         reactiveData$contigs_st <- read.csv(paste0(res_dir(),
-          paste0("22.contigs.tsv")), header = TRUE, sep = "\t")
+          paste0("22.contigs.tsv")), row.names = 1, header = TRUE, sep = "\t")
         reactiveData$taxa_st <- read.csv(paste0(res_dir(),
-          paste0("22.taxa.tsv")), header = TRUE, sep = "\t")
+          paste0("22.taxa.tsv")), row.names = 1, header = TRUE, sep = "\t")
         reactiveData$orfs_st <- read.csv(paste0(res_dir(),
-          paste0("22.orfs.tsv")), header = TRUE, sep = "\t")
+          paste0("22.orfs.tsv")), row.names = 1, header = TRUE, sep = "\t")
+        reactiveData$orfs_st[is.na(reactiveData$orfs_st)] <- 0
         reactiveData$bins_st <- read.csv(paste0(res_dir(),
-          paste0("22.bins.tsv")), header = TRUE, sep = "\t")
+          paste0("22.bins.tsv")), row.names = 1, header = TRUE, sep = "\t")
       } else { # if no stat files, empty objects
         reactiveData$reads_st <- matrix()
         reactiveData$contigs_st <- matrix()
@@ -77,7 +78,7 @@ server <- function(input, output, clientData, session) {
     }, error = function(error) {
       showModal(modalDialog(title = "Loading error",
         "Please check project and stat files", easyclose = TRUE))
-    }) # Close tryCatch)
+    }) # Close tryCatch
   }) # Close proj_load observer
 
   # Update Taxonomy Inputs ----

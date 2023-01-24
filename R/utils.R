@@ -45,7 +45,7 @@ read_ref <- function(file_path) {
 # Returns a list equivalent to that of read_ref
 # where the identifiers now have the full name
 # if they exist in the SQM object, otherwise 
-# they are NA
+# they are NULL
 
 check_ref <- function(SQM, file_path) {
     ref_ids <- read_ref(file_path) #read reference identifiers
@@ -70,3 +70,7 @@ check_ref <- function(SQM, file_path) {
     }
     return(check_ids)
 }
+
+# Takes the path to an SQM object
+# and parses the stat tables into independent files
+
