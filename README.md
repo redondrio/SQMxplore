@@ -15,17 +15,20 @@ The SQMxplore package solves this need to create a user-friendly interface to ex
 The easiest way to install SQMxplore from GitHub using `devtools`. First open an R session or Rstudio, and run the following commands:
 ```
 if(!require(devtools)) { install.packages("devtools"); library(devtools) }
-install_github("redondrio/SQMxplore@tfm")
+install_github("redondrio/SQMxplore")
 ```
 
-To install SQMxplore without the `devtools` package, download SQMxplore using the "Download ZIP" option at the GitHub repository. Please make sure you select the TFM branch, as it is currently the stable and finished version.
+To install SQMxplore without the `devtools` package, download SQMxplore using the "Download ZIP" option at the GitHub repository.
 Then open a terminal window at the directory where the package was downloaded and run the following commands (changing the file names if necessary):
 ```
 unzip SQMxplore-tfm.zip
-R CMD build SQMxplore-tfm
-R CMD install SQMxplore_0.1.tar.gz
+R CMD build SQMxplore
 ```
-If everything runs correctly, the line `* DONE (SQMxplore)` should be printed at the end of installation.
+If everything runs correctly, the a .tar.gz file should appear in the directory.
+Next step is to open an R session in that directory and run the line:
+```
+install.packages("./SQMxplore_0.2.tar.gz", repos = NULL, type="source")
+```
 
 Now the SQMxplore package can be loaded into an R environment using `library(SQMxplore)`.
 
