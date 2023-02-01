@@ -44,24 +44,20 @@ server <- function(input, output, clientData, session) {
         })
       # Load the stats file
       # add check.names=FALSE to prevent R from changing column names
-      if (input$type_load == "Load SQM project") {
-        reactiveData$reads_st <- read.csv(paste0(res_dir(),
-          paste0("22.reads.tsv")), row.names = 1, header = TRUE, sep = "\t")
-        reactiveData$contigs_st <- read.csv(paste0(res_dir(),
-          paste0("22.contigs.tsv")), row.names = 1, header = TRUE, sep = "\t")
-        reactiveData$taxa_st <- read.csv(paste0(res_dir(),
-          paste0("22.taxa.tsv")), row.names = 1, header = TRUE, sep = "\t")
-        reactiveData$orfs_st <- read.csv(paste0(res_dir(),
-          paste0("22.orfs.tsv")), row.names = 1, header = TRUE, sep = "\t")
-        reactiveData$orfs_st[is.na(reactiveData$orfs_st)] <- 0
-        reactiveData$bins_st <- read.csv(paste0(res_dir(),
-          paste0("22.bins.tsv")), row.names = 1, header = TRUE, sep = "\t")
-      } else { # if no stat files, empty objects
-        reactiveData$reads_st <- matrix()
-        reactiveData$contigs_st <- matrix()
-        reactiveData$taxa_st <- matrix()
-        reactiveData$orfs_st <- matrix()
-        reactiveData$bins_st <- matrix()
+      # For each possible stat file, check if file exist and load it
+      for (stat_file in c("reads", "contigs", "taxa", "orfs", "bins",
+        "functions", "hits")){
+        stat_file_path <- paste0(res_dir(), "22.", stat_file, ".tsv")
+        print(stat_file_path)
+        if (file.exists(stat_file_path)) {
+          print("In if")
+          reactiveData[[paste0(stat_file, "_st")]] <- read.csv(stat_file_path,
+            row.names = 1, header = TRUE, sep = "\t")
+          print(isolate(reactiveData[[paste0(stat_file, "_st")]]))
+        } else { #if no stat file, generate an empty matrix
+          print("In else")
+          reactiveData[[paste0(stat_file, "_st")]] <- matrix()
+        }
       }
       output$out_project <- renderText(isolate(input$project))
       # Load the reference identifiers
@@ -373,18 +369,17 @@ server <- function(input, output, clientData, session) {
   # Update Summary Inputs ----
   observe({
     updateSelectInput(session, "orfs_row1",
-                      choices = reactiveData$orfs_st[, 1]
+                      choices = row.names(reactiveData$orfs_st)
     )
     updateSelectInput(session, "orfs_row2",
-                      choices = reactiveData$orfs_st[, 1]
+                      choices = row.names(reactiveData$orfs_st)
     )
   }) # Close observer
 
   # Output Summary ----
   # Reads
   reactReadsSum <- reactive({ #create reactive function
-    as.data.frame(reactiveData$reads_st[, -1],
-      row.names = reactiveData$reads_st[, 1])
+    as.data.frame(reactiveData$reads_st)
   })
   output$reads_sum <- DT::renderDataTable({ #generate output
     DT::datatable(reactReadsSum(), options = list(
@@ -407,8 +402,7 @@ server <- function(input, output, clientData, session) {
 
   # Contigs
   reactContigsSum <- reactive({ #create reactive function
-    df <- as.data.frame(reactiveData$contigs_st[, -1],
-      row.names = reactiveData$contigs_st[, 1])
+    df <- as.data.frame(reactiveData$contigs_st)
     if (ncol(df) == 1) {
       names(df) <- c("Value")
       }
@@ -423,8 +417,7 @@ server <- function(input, output, clientData, session) {
 
   # Taxa
   reactTaxaSum <- reactive({ #create reactive function
-    as.data.frame(reactiveData$taxa_st[, -1],
-      row.names = reactiveData$taxa_st[, 1])
+    as.data.frame(reactiveData$taxa_st)
   })
   output$taxa_sum <- DT::renderDataTable({ #generate output
     DT::datatable(reactTaxaSum(), options = list(
@@ -435,8 +428,7 @@ server <- function(input, output, clientData, session) {
 
   # Orfs
   reactOrfsSum <- reactive({ #create reactive function
-    as.data.frame(reactiveData$orfs_st[, -1],
-      row.names = reactiveData$orfs_st[, 1])
+    as.data.frame(reactiveData$orfs_st)
   })
   output$orfs_sum <- DT::renderDataTable({ #generate output
     DT::datatable(reactOrfsSum(), options = list(
@@ -459,8 +451,7 @@ server <- function(input, output, clientData, session) {
   # Bins
   reactBinsSum <- reactive({ #create reactive function
     df <- as.data.frame(
-      reactiveData$bins_st[, -1],
-      row.names = reactiveData$bins_st[, 1])
+      reactiveData$bins_st)
     if (ncol(df) == 1) {
       names(df) <- c("Value")
       }
