@@ -80,8 +80,9 @@ parse_stats <- function(path, creator) {
     # Modify the pattern to change what is considered a stat file
     # Admits 21 and 22 for compatibility with SQM versions
     # where stats were 22
+    print(paste0(path, dir(path, pattern = "[21,22]*.stats")[1]))
     main_stats <- readLines(file(
-        paste0(path, "/", dir(path, pattern = "^[21,22]*.stats")[1])))
+        paste0(path, dir(path, pattern = "[21,22]*.stats")[1])))
     print(main_stats)
     sections <- switch(creator,
         "SQM_longreads" = c("header", "reads", "hits", "functions"),

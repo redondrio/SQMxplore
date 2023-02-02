@@ -44,6 +44,12 @@ server <- function(input, output, clientData, session) {
         })
       # Load the stats file
       # add check.names=FALSE to prevent R from changing column names
+      # Parse the stat file if not done previously
+      if (! file.exists(paste0(res_dir(), "22.reads.tsv"))) {
+        print("File 22.reads.tsv not found")
+        parse_stats(res_dir(), "SqueezeMeta")
+      }
+
       # For each possible stat file, check if file exist and load it
       for (stat_file in c("reads", "contigs", "taxa", "orfs", "bins",
         "functions", "hits")){
